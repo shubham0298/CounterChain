@@ -1,0 +1,14 @@
+1. Start admin node. Say it is server. Distribute ip and port.
+2. A client node gets added, no permissions to connect.
+3. Relay client node address to server (separate comm over internet required)
+4. Server grant permission to new client node
+5. Client now connects
+
+To-Do
+1. Start multichain node from python program                    [Extern proc]
+2. Get rpcpassword from config file                             [Extern proc]
+3. Create a http connection with admin for registeration        [HTTP]
+4. Recieve connect, send, receive permissions for blockchain    [admin side]
+5. Recieve permissions for streams                              [admin side]
+6. Connect to blockchain and subscribe to stream                [client side]
+7. Manage transactions
