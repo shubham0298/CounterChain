@@ -1,0 +1,2 @@
+# Exclude chains folder as it is maintained by local MultiChain client
+chains/**
