@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\sell.ui'
+# Form implementation generated from reading ui file 'sell.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -94,7 +94,7 @@ class Ui_SellWindow(object):
         self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.homeButton)
         SellWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(SellWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
         self.menubar.setObjectName("menubar")
         self.menuCounterChain = QtWidgets.QMenu(self.menubar)
         self.menuCounterChain.setObjectName("menuCounterChain")
@@ -121,7 +121,7 @@ class Ui_SellWindow(object):
         self.label_4.setText(_translate("SellWindow", "Quantity"))
         self.label_3.setText(_translate("SellWindow", "Buyer ID"))
         self.sellConfirmButton.setText(_translate("SellWindow", "Confirm"))
-        self.homeButton.setText(_translate("SellWindow", "Home"))
+        self.homeButton.setText(_translate("SellWindow", "Back"))
         self.menuCounterChain.setTitle(_translate("SellWindow", "CounterChain"))
         self.actionExit.setText(_translate("SellWindow", "Exit"))
 

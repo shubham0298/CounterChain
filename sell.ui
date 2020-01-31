@@ -156,7 +156,7 @@
     <item row="3" column="0">
      <widget class="QPushButton" name="homeButton">
       <property name="text">
-       <string>Home</string>
+       <string>Back</string>
       </property>
      </widget>
     </item>
@@ -168,7 +168,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCounterChain">
