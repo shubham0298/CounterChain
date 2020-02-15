@@ -35,7 +35,7 @@
       <x>30</x>
       <y>20</y>
       <width>751</width>
-      <height>511</height>
+      <height>441</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -198,22 +198,6 @@
        <string>I confirmed all the details are correct</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>407</y>
-        <width>93</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="cursor">
-       <cursorShape>PointingHandCursor</cursorShape>
-      </property>
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
@@ -297,19 +281,6 @@
        <string>Professional Tax Registration:</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>320</x>
-        <y>430</y>
-        <width>93</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Submit</string>
-      </property>
-     </widget>
      <widget class="QCheckBox" name="checkBox_2">
       <property name="geometry">
        <rect>
@@ -344,6 +315,29 @@
      <string>Back</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="submitButton">
+    <property name="geometry">
+     <rect>
+      <x>355</x>
+      <y>490</y>
+      <width>90</width>
+      <height>35</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>11</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="text">
+     <string>Submit</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -351,7 +345,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

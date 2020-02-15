@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'register.ui'
+# Form implementation generated from reading ui file '.\register.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -20,7 +20,7 @@ class Ui_registerWindow(object):
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setEnabled(True)
-        self.tabWidget.setGeometry(QtCore.QRect(30, 20, 751, 511))
+        self.tabWidget.setGeometry(QtCore.QRect(30, 20, 751, 441))
         self.tabWidget.setTabBarAutoHide(False)
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
@@ -66,10 +66,6 @@ class Ui_registerWindow(object):
         self.checkBox = QtWidgets.QCheckBox(self.tab)
         self.checkBox.setGeometry(QtCore.QRect(50, 360, 271, 31))
         self.checkBox.setObjectName("checkBox")
-        self.pushButton_2 = QtWidgets.QPushButton(self.tab)
-        self.pushButton_2.setGeometry(QtCore.QRect(320, 407, 93, 31))
-        self.pushButton_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.pushButton_2.setObjectName("pushButton_2")
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -91,9 +87,6 @@ class Ui_registerWindow(object):
         self.label_11 = QtWidgets.QLabel(self.tab_2)
         self.label_11.setGeometry(QtCore.QRect(50, 330, 191, 31))
         self.label_11.setObjectName("label_11")
-        self.pushButton = QtWidgets.QPushButton(self.tab_2)
-        self.pushButton.setGeometry(QtCore.QRect(320, 430, 93, 31))
-        self.pushButton.setObjectName("pushButton")
         self.checkBox_2 = QtWidgets.QCheckBox(self.tab_2)
         self.checkBox_2.setGeometry(QtCore.QRect(50, 380, 271, 31))
         self.checkBox_2.setObjectName("checkBox_2")
@@ -105,9 +98,18 @@ class Ui_registerWindow(object):
         font.setWeight(75)
         self.back.setFont(font)
         self.back.setObjectName("back")
+        self.submitButton = QtWidgets.QPushButton(self.centralwidget)
+        self.submitButton.setGeometry(QtCore.QRect(355, 490, 90, 35))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        font.setBold(True)
+        font.setWeight(75)
+        self.submitButton.setFont(font)
+        self.submitButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.submitButton.setObjectName("submitButton")
         registerWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(registerWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
         registerWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(registerWindow)
@@ -130,7 +132,6 @@ class Ui_registerWindow(object):
         self.comboBox.setItemText(1, _translate("registerWindow", "Distributer"))
         self.comboBox.setItemText(2, _translate("registerWindow", "Retailer"))
         self.checkBox.setText(_translate("registerWindow", "I confirmed all the details are correct"))
-        self.pushButton_2.setText(_translate("registerWindow", "Submit"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("registerWindow", "Personal Information"))
         self.label_6.setText(_translate("registerWindow", "Shops and Establishment License:"))
         self.label_7.setText(_translate("registerWindow", "Trade License:"))
@@ -138,10 +139,10 @@ class Ui_registerWindow(object):
         self.label_9.setText(_translate("registerWindow", "Manufacturing License:"))
         self.label_10.setText(_translate("registerWindow", "GST Registration no.:"))
         self.label_11.setText(_translate("registerWindow", "Professional Tax Registration:"))
-        self.pushButton.setText(_translate("registerWindow", "Submit"))
         self.checkBox_2.setText(_translate("registerWindow", "I confirmed all the documents are correct"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("registerWindow", "Document Verification"))
         self.back.setText(_translate("registerWindow", "Back"))
+        self.submitButton.setText(_translate("registerWindow", "Submit"))
 
 
 if __name__ == "__main__":

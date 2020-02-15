@@ -18,10 +18,10 @@ class LoginWindow(QtWidgets.QMainWindow, Ui_loginWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.login.clicked.connect(self.sellbutton_handler)
+        self.login.clicked.connect(self.loginbutton_handler)
         self.register_2.clicked.connect(self.regbutton_handler)
 
-    def sellbutton_handler(self):
+    def loginbutton_handler(self):
         self.open_dash.emit()
 
     def regbutton_handler(self):
@@ -30,15 +30,20 @@ class LoginWindow(QtWidgets.QMainWindow, Ui_loginWindow):
 class RegWindow(QtWidgets.QMainWindow, Ui_registerWindow):
 
     go_back = QtCore.pyqtSignal()
+    init_reg = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
         self.back.clicked.connect(self.homebutton_handler)
+        self.submitButton.clicked.connect(self.registerbutton_handler)
 
     def homebutton_handler(self):
         self.go_back.emit()
+    
+    def registerbutton_handler(self):
+        self.init_reg.emit()
 
 class DashWindow(QtWidgets.QMainWindow, Ui_DashboardWindow):
 
@@ -129,20 +134,23 @@ class Controller:
 
     currentWindow = None
 
-    def __init__(self, rpcclient):
-        self.client = rpcclient
+    def __init__(self):
+        self.client = None
+        self.userid = None
     
     def show_login(self):
         self.loginwindow = LoginWindow()
-        self.loginwindow.open_dash.connect(self.show_main)
+        self.loginwindow.open_dash.connect(self.initiate_login)
         self.loginwindow.open_reg.connect(self.show_reg)
         self.loginwindow.show()
         if (self.currentWindow):
             self.currentWindow.close()
+        self.currentWindow = self.loginwindow
 
     def show_reg(self):
         self.reg = RegWindow()
         self.reg.go_back.connect(self.show_login)
+        self.reg.init_reg.connect(self.initiate_registration)
         self.reg.show()
         self.loginwindow.hide()
         self.currentWindow = self.reg
@@ -153,7 +161,6 @@ class Controller:
         self.mainwindow.open_receive.connect(self.show_receive)
         self.mainwindow.open_additem.connect(self.show_additem)
         self.mainwindow.open_inventory.connect(self.show_inventory)
-        self.loginwindow.hide()
         self.mainwindow.show()
         if (self.currentWindow):
             self.currentWindow.close()
@@ -188,6 +195,47 @@ class Controller:
         self.currentWindow = self.receive
         self.list_receive()
     
+    def initiate_login(self):
+        # socket code here
+        # returns result object
+        result = {
+            "success": True,
+            "status": "ACCEPT",
+            "userid": "man101"
+        }
+
+        if (result["success"] == True and result["status"] == "ACCEPT"):
+            rpcport = "7077"
+            rootNode = "CounterChain@35.154.49.40:7445"
+            rpcpassword = MCNodeCreator().startMCNode(rpcport, rootNode)
+            self.client = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
+
+            self.userid = result["userid"]
+            self.show_main()
+        elif (result["success"] == True and result["status"] == "PENDING"):
+            print("Verification under process")
+        else:
+            print("Login failed")
+    
+    def initiate_registration(self):
+        # socket code here
+        # upload details and files
+        # upload node wallet address
+        rpcport = "7077"
+        rootNode = "CounterChain@35.154.49.40:7445"
+        walletAddress = MCNodeCreator().startMCNode(rpcport, rootNode)
+        # returns result object
+        result = {
+            "success": True,
+            "status": "PENDING",
+        }
+
+        if (result["success"] == True):
+            print("Registration success. Verification under process for address:", walletAddress)
+            self.show_login()
+        else:
+            print("Registration failed")
+    
     def sell_txn(self):
         products = {
             1: "Drug 1",
@@ -200,7 +248,7 @@ class Controller:
 
         # Generate JSON data
         jsonData = { "json" : {
-            "sellerID": "tut01",
+            "sellerID": self.userid,
             "buyerID": buyerID,
             "productID": "__BARCODE_HERE__",
             "productName": pName,
@@ -217,13 +265,13 @@ class Controller:
 
 
 def main():
-    rpcport = "7077"
-    rootNode = "CounterChain@35.154.49.40:7445"
-    rpcpassword = MCNodeCreator().startMCNode(rpcport, rootNode)
-    rpcclient = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
+    # rpcport = "7077"
+    # rootNode = "CounterChain@35.154.49.40:7445"
+    # rpcpassword = MCNodeCreator().startMCNode(rpcport, rootNode)
+    # rpcclient = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
 
     app = QtWidgets.QApplication(sys.argv)
-    controller = Controller(rpcclient)
+    controller = Controller()
     controller.show_login()
     sys.exit(app.exec_())
 

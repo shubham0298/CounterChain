@@ -61,17 +61,25 @@ class MCNodeCreator:
         os.chdir(bindir)
         print(os.getcwd())
         print("Starting MultiChain Node...")
-        subprocess.Popen(["multichaind", "-datadir="+datadir, "-rpcport="+port, rootNode])
-        time.sleep(5)
+        proc = subprocess.Popen(["multichaind", "-datadir="+datadir, "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
+        try:
+            outs, errs = proc.communicate(timeout=5)
+            # Permissions not granted i.e not yet registered
+            outs = outs.split()
+            walletAddress = outs[outs.index("multichain-cli") + 3]
+            return walletAddress
+        except subprocess.TimeoutExpired:
+            # Node initialised successfully, now connect to rpcport
+            # Get password
+            print("Obtain rpcpassword")
+            configFile = datadir + "\\CounterChain\\multichain.conf"
+            conf = open(configFile, 'r')
+            conf.readline()
+            line = conf.readline().strip().split("=")
+            rpcpassword = line[1]
+            conf.close()
+            # print(rpcpassword)
+            return rpcpassword
+        
+        # time.sleep(5)
         # subprocess.run(["multichaind"])
-
-        # Get password
-        print("Obtain rpcpassword")
-        configFile = datadir + "\\CounterChain\\multichain.conf"
-        conf = open(configFile, 'r')
-        conf.readline()
-        line = conf.readline().strip().split("=")
-        rpcpassword = line[1]
-        conf.close()
-        # print(rpcpassword)
-        return rpcpassword
