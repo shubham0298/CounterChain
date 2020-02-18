@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'login.ui'
+# Form implementation generated from reading ui file '.\login.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -52,18 +52,18 @@ class Ui_loginWindow(object):
         self.register_2.setFont(font)
         self.register_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.register_2.setObjectName("register_2")
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(290, 250, 301, 41))
-        self.lineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText|QtCore.Qt.ImhSensitiveData)
-        self.lineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setGeometry(QtCore.QRect(290, 150, 301, 41))
-        self.lineEdit_2.setInputMethodHints(QtCore.Qt.ImhNone)
-        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.paswd_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.paswd_lineEdit.setGeometry(QtCore.QRect(290, 250, 301, 41))
+        self.paswd_lineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText|QtCore.Qt.ImhSensitiveData)
+        self.paswd_lineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
+        self.paswd_lineEdit.setObjectName("paswd_lineEdit")
+        self.id_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.id_lineEdit.setGeometry(QtCore.QRect(290, 150, 301, 41))
+        self.id_lineEdit.setInputMethodHints(QtCore.Qt.ImhNone)
+        self.id_lineEdit.setObjectName("id_lineEdit")
         loginWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(loginWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
         self.menuCounterChain = QtWidgets.QMenu(self.menubar)
         self.menuCounterChain.setObjectName("menuCounterChain")

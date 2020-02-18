@@ -1,5 +1,6 @@
 import sys
 from MCHelper import MCClient, MCNodeCreator
+from SocketHelper import SocketHelper
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui_dashboard import Ui_DashboardWindow
 from ui_sell import Ui_SellWindow
@@ -137,6 +138,7 @@ class Controller:
     def __init__(self):
         self.client = None
         self.userid = None
+        self.socket = SocketHelper()
     
     def show_login(self):
         self.loginwindow = LoginWindow()
@@ -197,13 +199,15 @@ class Controller:
     
     def initiate_login(self):
         # socket code here
+        login_data = [self.loginwindow.id_lineEdit.text(), self.loginwindow.paswd_lineEdit.text()]
+        result = self.socket.send(login_data)
         # returns result object
-        result = {
-            "success": True,
-            "status": "ACCEPT",
-            "userid": "man101"
-        }
-
+        # result = {
+        #     "success": True,
+        #     "status": "ACCEPT",
+        #     "userid": "man101"
+        # }
+        
         if (result["success"] == True and result["status"] == "ACCEPT"):
             rpcport = "7077"
             rootNode = "CounterChain@35.154.49.40:7445"
