@@ -54,8 +54,15 @@
         <x>50</x>
         <y>60</y>
         <width>111</width>
-        <height>31</height>
+        <height>30</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Business E-mail:</string>
@@ -67,8 +74,15 @@
         <x>50</x>
         <y>130</y>
         <width>81</width>
-        <height>31</height>
+        <height>30</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Password:</string>
@@ -83,6 +97,13 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
       <property name="text">
        <string>Organization name:</string>
       </property>
@@ -93,51 +114,18 @@
         <x>50</x>
         <y>280</y>
         <width>81</width>
-        <height>31</height>
+        <height>30</height>
        </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
        <string>Phone no.:</string>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>56</y>
-        <width>241</width>
-        <height>41</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit_2">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>130</y>
-        <width>241</width>
-        <height>41</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit_3">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>200</y>
-        <width>241</width>
-        <height>41</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit_4">
-      <property name="geometry">
-       <rect>
-        <x>190</x>
-        <y>280</y>
-        <width>241</width>
-        <height>41</height>
-       </rect>
       </property>
      </widget>
      <widget class="QLabel" name="label_5">
@@ -160,7 +148,7 @@
        <string>Select Role</string>
       </property>
      </widget>
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="role">
       <property name="geometry">
        <rect>
         <x>532</x>
@@ -185,7 +173,7 @@
        </property>
       </item>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="confirm_check">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -194,12 +182,60 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
       <property name="text">
-       <string>I confirmed all the details are correct</string>
+       <string>I confirm all the details are correct</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="email_LE">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>60</y>
+        <width>230</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="paswd_LE">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>130</y>
+        <width>230</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="name_LE">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>200</y>
+        <width>230</width>
+        <height>30</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="phone_LE">
+      <property name="geometry">
+       <rect>
+        <x>190</x>
+        <y>280</y>
+        <width>230</width>
+        <height>30</height>
+       </rect>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <attribute name="title">
       <string>Document Verification</string>
      </attribute>
@@ -296,7 +332,7 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QPushButton" name="back">
+   <widget class="QPushButton" name="backButton">
     <property name="geometry">
      <rect>
       <x>680</x>

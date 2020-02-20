@@ -37,7 +37,7 @@ class RegWindow(QtWidgets.QMainWindow, Ui_registerWindow):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
-        self.back.clicked.connect(self.homebutton_handler)
+        self.backButton.clicked.connect(self.homebutton_handler)
         self.submitButton.clicked.connect(self.registerbutton_handler)
 
     def homebutton_handler(self):
@@ -138,6 +138,7 @@ class Controller:
     def __init__(self):
         self.client = None
         self.userid = None
+        self.role = None
         self.socket = SocketHelper()
     
     def show_login(self):
@@ -150,12 +151,12 @@ class Controller:
         self.currentWindow = self.loginwindow
 
     def show_reg(self):
-        self.reg = RegWindow()
-        self.reg.go_back.connect(self.show_login)
-        self.reg.init_reg.connect(self.initiate_registration)
-        self.reg.show()
+        self.regwindow = RegWindow()
+        self.regwindow.go_back.connect(self.show_login)
+        self.regwindow.init_reg.connect(self.initiate_registration)
+        self.regwindow.show()
         self.loginwindow.hide()
-        self.currentWindow = self.reg
+        self.currentWindow = self.regwindow
 
     def show_main(self):
         self.mainwindow = DashWindow()
@@ -200,12 +201,13 @@ class Controller:
     def initiate_login(self):
         # socket code here
         login_data = [self.loginwindow.id_lineEdit.text(), self.loginwindow.paswd_lineEdit.text()]
-        result = self.socket.send(login_data)
+        result = self.socket.login(login_data)
         # returns result object
         # result = {
         #     "success": True,
-        #     "status": "ACCEPT",
-        #     "userid": "man101"
+        #     "status": "ACCEPT/PENDING/REJECT", or Error msg
+        #     "userid": txn_id,
+        #     "role": role
         # }
         
         if (result["success"] == True and result["status"] == "ACCEPT"):
@@ -215,30 +217,48 @@ class Controller:
             self.client = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
 
             self.userid = result["userid"]
+            self.role = result["role"]
             self.show_main()
         elif (result["success"] == True and result["status"] == "PENDING"):
             print("Verification under process")
         else:
-            print("Login failed")
+            print("{}:Login failed".format(result["status"]))
     
     def initiate_registration(self):
         # socket code here
         # upload details and files
         # upload node wallet address
         rpcport = "7077"
-        rootNode = "CounterChain@35.154.49.40:7445"
+        rootIP = self.socket.resolve("counterchain.ddns.net")
+        rootNode = "CounterChain@" + rootIP + ":7445"
         walletAddress = MCNodeCreator().startMCNode(rpcport, rootNode)
-        # returns result object
-        result = {
-            "success": True,
-            "status": "PENDING",
+        roles = {
+            0: "Manufacturer",
+            1: "Distributor",
+            2: "Retailer"
         }
+        newUserData = []
+        newUserData.append(self.regwindow.paswd_LE.text())
+        newUserData.append(self.regwindow.name_LE.text())
+        newUserData.append(roles[self.regwindow.role.currentIndex()])
+        newUserData.append(walletAddress)
+        newUserData.append(self.regwindow.email_LE.text())
+        newUserData.append(self.regwindow.phone_LE.text())
+
+        result = self.socket.register(newUserData)
+        # returns result object
+        # result = {
+        #     "success": True,
+        #     "status": "PENDING", or Error msg
+        #     "userID": txn_id
+        # }
 
         if (result["success"] == True):
             print("Registration success. Verification under process for address:", walletAddress)
+            print("Your user id:", result["userid"])
             self.show_login()
         else:
-            print("Registration failed")
+            print("{}:Registration failed".format(result["status"]))
     
     def sell_txn(self):
         products = {
