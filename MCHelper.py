@@ -61,8 +61,8 @@ class MCNodeCreator:
         os.chdir(bindir)
         print(os.getcwd())
         print("Starting MultiChain Node...")
-        proc = subprocess.Popen(["multichaind", "-datadir="+datadir, "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
-        # proc = subprocess.Popen(["multichaind", "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
+        # proc = subprocess.Popen(["multichaind", "-datadir="+datadir, "-rpcport="+port, rootNode], stdout=subprocess.PIPE)
+        proc = subprocess.Popen(["multichaind", "-rpcport="+port, rootNode], stdout=subprocess.PIPE)
         try:
             outs, errs = proc.communicate(timeout=5)
             # Permissions not granted i.e not yet registered

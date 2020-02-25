@@ -13,55 +13,65 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_inventory(object):
     def setupUi(self, inventory):
         inventory.setObjectName("inventory")
-        inventory.resize(800, 600)
+        inventory.resize(1000, 800)
+        inventory.setMinimumSize(QtCore.QSize(1000, 800))
+        inventory.setMaximumSize(QtCore.QSize(1000, 800))
         self.centralwidget = QtWidgets.QWidget(inventory)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(340, 20, 151, 31))
+        self.label.setGeometry(QtCore.QRect(380, 150, 231, 51))
         font = QtGui.QFont()
-        font.setPointSize(10)
+        font.setPointSize(25)
         font.setBold(True)
         font.setWeight(75)
         self.label.setFont(font)
+        self.label.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.tableWidget = QtWidgets.QTableWidget(self.centralwidget)
-        self.tableWidget.setGeometry(QtCore.QRect(140, 60, 551, 401))
+        self.tableWidget.setGeometry(QtCore.QRect(210, 240, 551, 441))
+        self.tableWidget.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setRowCount(20)
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.verticalHeader().setVisible(True)
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(370, 490, 93, 28))
+        self.pushButton.setGeometry(QtCore.QRect(430, 700, 121, 51))
         font = QtGui.QFont()
-        font.setPointSize(9)
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
         self.pushButton.setFont(font)
+        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton.setObjectName("pushButton")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(30, 0, 211, 71))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        font.setBold(True)
+        font.setItalic(True)
+        font.setWeight(75)
+        self.label_3.setFont(font)
+        self.label_3.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.label_3.setObjectName("label_3")
+        self.logout = QtWidgets.QPushButton(self.centralwidget)
+        self.logout.setGeometry(QtCore.QRect(860, 20, 121, 51))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.logout.setFont(font)
+        self.logout.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.logout.setObjectName("logout")
         inventory.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(inventory)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
         self.menubar.setObjectName("menubar")
         inventory.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(inventory)
         self.statusbar.setObjectName("statusbar")
         inventory.setStatusBar(self.statusbar)
-
-        head1 = QtWidgets.QTableWidgetItem();
-        head1.setText("Product Info")
-        self.tableWidget.setHorizontalHeaderItem(0,head1);
-
-        head2 = QtWidgets.QTableWidgetItem();
-        head2.setText("Product details")
-        self.tableWidget.setHorizontalHeaderItem(1,head2);
-
-        head3 = QtWidgets.QTableWidgetItem();
-        head3.setText("Quantity")
-        self.tableWidget.setHorizontalHeaderItem(2,head3);
-
-        head4 = QtWidgets.QTableWidgetItem();
-        head4.setText("Status")
-        self.tableWidget.setHorizontalHeaderItem(3,head4);
 
         self.retranslateUi(inventory)
         QtCore.QMetaObject.connectSlotsByName(inventory)
@@ -71,6 +81,8 @@ class Ui_inventory(object):
         inventory.setWindowTitle(_translate("inventory", "Inventory"))
         self.label.setText(_translate("inventory", "Inventory"))
         self.pushButton.setText(_translate("inventory", "Back"))
+        self.label_3.setText(_translate("inventory", "CounterChain"))
+        self.logout.setText(_translate("inventory", "Log Out"))
 
 
 if __name__ == "__main__":
