@@ -9,6 +9,7 @@ from ui_inventory import Ui_inventory
 from ui_itemadd import Ui_itemadd
 from ui_login import Ui_loginWindow
 from ui_register import Ui_registerWindow
+from ui_dashboardother import Ui_DashboardWindow_other
 
 class LoginWindow(QtWidgets.QMainWindow, Ui_loginWindow):
 
@@ -52,6 +53,7 @@ class DashWindow(QtWidgets.QMainWindow, Ui_DashboardWindow):
     open_receive = QtCore.pyqtSignal()
     open_additem = QtCore.pyqtSignal()
     open_inventory = QtCore.pyqtSignal()
+    logout_signal = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -61,6 +63,7 @@ class DashWindow(QtWidgets.QMainWindow, Ui_DashboardWindow):
         self.receiveButton.clicked.connect(self.receivebutton_handler)
         self.addButton.clicked.connect(self.addbutton_handler)
         self.inventoryButton.clicked.connect(self.inventbutton_handler)
+        self.logout.clicked.connect(self.logout_handler)
 
     def sellbutton_handler(self):
         self.open_sell.emit()
@@ -73,6 +76,36 @@ class DashWindow(QtWidgets.QMainWindow, Ui_DashboardWindow):
 
     def inventbutton_handler(self):
         self.open_inventory.emit()
+
+    def logout_handler(self):
+        self.logout_signal.emit()
+
+class DashWindowother(QtWidgets.QMainWindow, Ui_DashboardWindow_other):
+
+    open_sell = QtCore.pyqtSignal()
+    open_receive = QtCore.pyqtSignal()
+    open_inventory = QtCore.pyqtSignal()
+    logout_signal = QtCore.pyqtSignal()
+
+    def __init__(self):
+        QtWidgets.QMainWindow.__init__(self)
+        self.setupUi(self)
+        self.sellButton.clicked.connect(self.sellbutton_handler)
+        self.receiveButton.clicked.connect(self.receivebutton_handler)
+        self.inventoryButton.clicked.connect(self.inventbutton_handler)
+        self.logout.clicked.connect(self.logout_handler)
+
+    def sellbutton_handler(self):
+        self.open_sell.emit()
+    
+    def receivebutton_handler(self):
+        self.open_receive.emit()
+
+    def inventbutton_handler(self):
+        self.open_inventory.emit()
+
+    def logout_handler(self):
+        self.logout_signal.emit()
 
 class SellWindow(QtWidgets.QMainWindow, Ui_SellWindow):
 
@@ -159,14 +192,26 @@ class Controller:
         self.currentWindow = self.regwindow
 
     def show_main(self):
-        self.mainwindow = DashWindow()
+        if(self.role == "Manufacturer"):
+            self.mainwindow = DashWindow()
+            self.mainwindow.open_additem.connect(self.show_additem)
+        else:
+            self.mainwindow = DashWindowother()
         self.mainwindow.open_sell.connect(self.show_sell)
         self.mainwindow.open_receive.connect(self.show_receive)
-        self.mainwindow.open_additem.connect(self.show_additem)
         self.mainwindow.open_inventory.connect(self.show_inventory)
+        self.mainwindow.logout_signal.connect(self.do_logout)
         self.mainwindow.show()
+        self.mainwindow.role.setText("Role: "+self.role)
+        self.mainwindow.uid.setText("Login ID: "+self.userid)
         if (self.currentWindow):
             self.currentWindow.close()
+
+    def do_logout(self):
+        if (self.mainwindow):
+            self.mainwindow.close()
+        self.show_login()
+        self.client.stop()
 
     def show_sell(self):
         self.sell = SellWindow()
@@ -209,7 +254,6 @@ class Controller:
         #     "userid": txn_id,
         #     "role": role
         # }
-        
         if (result["success"] == True and result["status"] == "ACCEPT"):
             rpcport = "7077"
             rootNode = "CounterChain@35.154.49.40:7445"

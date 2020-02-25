@@ -55,15 +55,6 @@ class Ui_inventory(object):
         self.label_3.setFont(font)
         self.label_3.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label_3.setObjectName("label_3")
-        self.logout = QtWidgets.QPushButton(self.centralwidget)
-        self.logout.setGeometry(QtCore.QRect(860, 20, 121, 51))
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        font.setBold(True)
-        font.setWeight(75)
-        self.logout.setFont(font)
-        self.logout.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.logout.setObjectName("logout")
         inventory.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(inventory)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
@@ -82,7 +73,6 @@ class Ui_inventory(object):
         self.label.setText(_translate("inventory", "Inventory"))
         self.pushButton.setText(_translate("inventory", "Back"))
         self.label_3.setText(_translate("inventory", "CounterChain"))
-        self.logout.setText(_translate("inventory", "Log Out"))
 
 
 if __name__ == "__main__":
