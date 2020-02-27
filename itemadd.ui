@@ -95,7 +95,7 @@
      <string>Product name:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="pidLE">
     <property name="geometry">
      <rect>
       <x>450</x>
@@ -110,7 +110,7 @@
      </font>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="pnameLE">
     <property name="geometry">
      <rect>
       <x>450</x>
@@ -125,7 +125,7 @@
      </font>
     </property>
    </widget>
-   <widget class="QPushButton" name="add">
+   <widget class="QPushButton" name="addButton">
     <property name="geometry">
      <rect>
       <x>360</x>
@@ -202,7 +202,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

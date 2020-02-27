@@ -111,6 +111,8 @@ class SellWindow(QtWidgets.QMainWindow, Ui_SellWindow):
 
     go_back = QtCore.pyqtSignal()
     sell_txn = QtCore.pyqtSignal()
+    reset_input = QtCore.pyqtSignal()
+    clear_pid = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
@@ -118,38 +120,66 @@ class SellWindow(QtWidgets.QMainWindow, Ui_SellWindow):
 
         self.homeButton.clicked.connect(self.homebutton_handler)
         self.sellConfirmButton.clicked.connect(self.sellbutton_handler)
+        self.clearButton.clicked.connect(self.clearbutton_handler)
+        self.resetButton.clicked.connect(self.resetbutton_handler)
 
     def homebutton_handler(self):
         self.go_back.emit()
     
     def sellbutton_handler(self):
         self.sell_txn.emit()
+    
+    def resetbutton_handler(self):
+        self.reset_input.emit()
+    
+    def clearbutton_handler(self):
+        self.clear_pid.emit()
 
 class ReceiveWindow(QtWidgets.QMainWindow, Ui_ReceiveWindow):
 
     go_back = QtCore.pyqtSignal()
+    list_item = QtCore.pyqtSignal()
+    rcv_item = QtCore.pyqtSignal()
+    rcv_all = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
         self.homeButton.clicked.connect(self.homebutton_handler)
+        self.checkButton.clicked.connect(self.checkbutton_handler)
+        self.rcvButton.clicked.connect(self.rcvbutton_handler)
+        self.rcvallButton.clicked.connect(self.rcvallbutton_handler)
 
     def homebutton_handler(self):
         self.go_back.emit()
+    
+    def checkbutton_handler(self):
+        self.list_item.emit()
+    
+    def rcvbutton_handler(self):
+        self.rcv_item.emit()
+    
+    def rcvallbutton_handler(self):
+        self.rcv_all.emit()
 
 class AddWindow(QtWidgets.QMainWindow, Ui_itemadd):
 
     go_back = QtCore.pyqtSignal()
+    add_product = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
         self.back.clicked.connect(self.homebutton_handler)
+        self.addButton.clicked.connect(self.addproduct_handler)
 
     def homebutton_handler(self):
         self.go_back.emit()
+    
+    def addproduct_handler(self):
+        self.add_product.emit()
 
 class InventoryWindow(QtWidgets.QMainWindow, Ui_inventory):
 
@@ -207,16 +237,12 @@ class Controller:
         if (self.currentWindow):
             self.currentWindow.close()
 
-    def do_logout(self):
-        if (self.mainwindow):
-            self.mainwindow.close()
-        self.show_login()
-        self.client.stop()
-
     def show_sell(self):
         self.sell = SellWindow()
         self.sell.go_back.connect(self.show_main)
         self.sell.sell_txn.connect(self.sell_txn)
+        self.sell.clear_pid.connect(self.sell_clear)
+        self.sell.reset_input.connect(self.sell_reset)
         self.sell.show()
         self.mainwindow.hide()
         self.currentWindow = self.sell
@@ -224,6 +250,7 @@ class Controller:
     def show_additem(self):
         self.additem = AddWindow()
         self.additem.go_back.connect(self.show_main)
+        self.additem.add_product.connect(self.add_txn)
         self.additem.show()
         self.mainwindow.hide()
         self.currentWindow = self.additem
@@ -238,10 +265,13 @@ class Controller:
     def show_receive(self):
         self.receive = ReceiveWindow()
         self.receive.go_back.connect(self.show_main)
+        # self.receive.list_item.connect()
+        # self.receive.rcv_item.connect()
+        # self.receive.rcv_all.connect()
         self.receive.show()
         self.mainwindow.hide()
         self.currentWindow = self.receive
-        self.list_receive()
+        # self.list_receive()
     
     def initiate_login(self):
         # socket code here
@@ -279,7 +309,7 @@ class Controller:
         walletAddress = MCNodeCreator().startMCNode(rpcport, rootNode)
         roles = {
             0: "Manufacturer",
-            1: "Distributor",
+            1: "Distributer",
             2: "Retailer"
         }
         newUserData = []
@@ -305,25 +335,40 @@ class Controller:
         else:
             print("{}:Registration failed".format(result["status"]))
     
-    def sell_txn(self):
-        products = {
-            1: "Drug 1",
-            2: "Drug 2"
-        }
-        pName = products[self.sell.productName.currentIndex()]
-        quantity = self.sell.quantity.value()
-        buyerID = self.sell.buyerID.text()
-        print(pName, quantity, buyerID)
+    def do_logout(self):
+        if (self.mainwindow):
+            self.mainwindow.close()
+        self.show_login()
+        self.client.stop()
+    
+    def add_txn(self):
+        # Generate JSON data
+        jsonData = { "json": {
+            "PId": self.additem.pidLE.text(),
+            "PName": self.additem.pnameLE.text(),
+            "Buyer Txn Id": self.userid,
+            "Seller Txn Id": self.userid,
+            "Status": "COMPLETE"
+        }}
+        self.client.publishTxn(jsonData)
 
+    def sell_txn(self):
         # Generate JSON data
         jsonData = { "json" : {
+            "PId": self.sell.pidLE.text(),
+            "PName": "dummy",
             "sellerID": self.userid,
-            "buyerID": buyerID,
-            "productID": "__BARCODE_HERE__",
-            "productName": pName,
-            "quantity": quantity
+            "buyerID": self.sell.buyeridLE.text(),
+            "Status": "PENDING"
         }}
-        self.client.makeSellTxn(jsonData)
+        self.client.publishTxn(jsonData)
+    
+    def sell_clear(self):
+        self.sell.pidLE.clear()
+    
+    def sell_reset(self):
+        self.sell.pidLE.clear()
+        self.sell.buyeridLE.clear()
     
     def list_receive(self):
         streamName = "tutstream"

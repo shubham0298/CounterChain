@@ -16,17 +16,16 @@ class MCClient(mcrpc.RpcClient):
         print("My address:",self.address)
 
         # Subscribe to tutorial stream
-        streamName = "tutstream"
-        self.subscribe(streamName)
+        self.streamName = "Itemstream"
+        self.subscribe(self.streamName)
     
-    def makeSellTxn(self, jsonData):
+    def publishTxn(self, jsonData):
         # Publish data to tutorial stream
-        streamName = "tutstream"
         clientKey = "clientKey"
-        self.publish(streamName, clientKey, jsonData)
+        self.publish(self.streamName, clientKey, jsonData)
     
-    def getStreamItems(self, streamName, buyerId):
-        streamItems = self.liststreamitems(streamName)
+    def getStreamItems(self, buyerId):
+        streamItems = self.liststreamitems(self.streamName)
         jsonData = []
         for items in streamItems:
             jsonData.append(items["data"]["json"])
