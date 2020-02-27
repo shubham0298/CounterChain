@@ -256,7 +256,8 @@ class Controller:
         # }
         if (result["success"] == True and result["status"] == "ACCEPT"):
             rpcport = "7077"
-            rootNode = "CounterChain@35.154.49.40:7445"
+            rootIP = self.socket.resolve("counterchain.ddns.net")
+            rootNode = "CounterChain@" + rootIP + ":7445"
             rpcpassword = MCNodeCreator().startMCNode(rpcport, rootNode)
             self.client = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
 
