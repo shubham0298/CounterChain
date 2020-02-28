@@ -1,5 +1,5 @@
 import sys
-from MCHelper import MCClient, MCNodeCreator
+from MCHelper import MCClient, MCNodeCreator, Query
 from SocketHelper import SocketHelper
 from PyQt5 import QtCore, QtGui, QtWidgets
 from ui_dashboard import Ui_DashboardWindow
@@ -265,9 +265,9 @@ class Controller:
     def show_receive(self):
         self.receive = ReceiveWindow()
         self.receive.go_back.connect(self.show_main)
-        # self.receive.list_item.connect()
-        # self.receive.rcv_item.connect()
-        # self.receive.rcv_all.connect()
+        self.receive.list_item.connect(self.rcv_list)
+        self.receive.rcv_item.connect(self.rcv_txn)
+        self.receive.rcv_all.connect(self.rcv_all)
         self.receive.show()
         self.mainwindow.hide()
         self.currentWindow = self.receive
@@ -346,8 +346,8 @@ class Controller:
         jsonData = { "json": {
             "PId": self.additem.pidLE.text(),
             "PName": self.additem.pnameLE.text(),
-            "Buyer Txn Id": self.userid,
-            "Seller Txn Id": self.userid,
+            "SellerId": self.userid,
+            "BuyerId": self.userid,
             "Status": "COMPLETE"
         }}
         self.client.publishTxn(jsonData)
@@ -357,8 +357,8 @@ class Controller:
         jsonData = { "json" : {
             "PId": self.sell.pidLE.text(),
             "PName": "dummy",
-            "sellerID": self.userid,
-            "buyerID": self.sell.buyeridLE.text(),
+            "SellerId": self.userid,
+            "BuyerId": self.sell.buyeridLE.text(),
             "Status": "PENDING"
         }}
         self.client.publishTxn(jsonData)
@@ -370,13 +370,62 @@ class Controller:
         self.sell.pidLE.clear()
         self.sell.buyeridLE.clear()
     
-    def list_receive(self):
-        streamName = "tutstream"
-        buyerId = "dist123"
-        itemString = self.client.getStreamItems(streamName, buyerId)
-        self.receive.itemList.setReadOnly(True)
-        self.receive.itemList.setPlainText(itemString)
+    def rcv_list(self):
+        sellerId = self.receive.selleridLE.text()
+        buyerId = self.userid
+        itemList = self.client.receivableItems(sellerId, buyerId)
+        queryProcess = Query(self.client, sellerId)
 
+        self.receive.rcvTable.clear()
+        self.receive.rcvTable.setRowCount(0)
+        for row,items in enumerate(itemList):
+            self.receive.rcvTable.insertRow(row)
+            self.receive.rcvTable.setItem(row, 0, QtWidgets.QTableWidgetItem(items["SellerId"]))
+            self.receive.rcvTable.setItem(row, 1, QtWidgets.QTableWidgetItem(items["PId"]))
+            self.receive.rcvTable.setItem(row, 2, QtWidgets.QTableWidgetItem(items["PName"]))
+            queryProcess.check(items["PId"])
+            self.receive.rcvTable.setItem(row, 3, QtWidgets.QTableWidgetItem(queryProcess.response))
+        
+        self.receive.rcvTable.setHorizontalHeaderLabels(["Seller ID", "Product ID", "Product Name", "Status"])
+        self.receive.rcvTable.resizeColumnsToContents()
+        self.receive.rcvTable.resizeRowsToContents()
+    
+    def rcv_txn(self):
+        selectedItem = self.receive.rcvTable.currentItem()
+        row =  self.receive.rcvTable.row(selectedItem)
+
+        if (self.receive.rcvTable.item(row, 3).text() == "Authentic"):
+            # Generate JSON data
+            jsonData = { "json" : {
+                "PId": self.receive.rcvTable.item(row, 1).text(),
+                "PName": self.receive.rcvTable.item(row, 2).text(),
+                "SellerId": self.receive.rcvTable.item(row, 0).text(),
+                "BuyerId": self.userid,
+                "Status": "COMPLETE"
+            }}
+            self.client.publishTxn(jsonData)
+            self.receive.rcvTable.removeRow(row)
+        else:
+            print("Counterfeit")
+    
+    def rcv_all(self):
+        rowCount = self.receive.rcvTable.rowCount()
+        row = 0
+        while (rowCount > 0 and row < rowCount):
+            if (self.receive.rcvTable.item(row, 3).text() == "Authentic"):
+                # Generate JSON data
+                jsonData = { "json" : {
+                    "PId": self.receive.rcvTable.item(row, 1).text(),
+                    "PName": self.receive.rcvTable.item(row, 2).text(),
+                    "SellerId": self.receive.rcvTable.item(row, 0).text(),
+                    "BuyerId": self.userid,
+                    "Status": "COMPLETE"
+                }}
+                self.client.publishTxn(jsonData)
+                self.receive.rcvTable.removeRow(row)
+            else:
+                row += 1
+            rowCount = self.receive.rcvTable.rowCount()
 
 def main():
     # rpcport = "7077"

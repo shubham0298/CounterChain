@@ -203,6 +203,11 @@
     </property>
     <column>
      <property name="text">
+      <string>Seller ID</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
       <string>Product ID</string>
      </property>
     </column>
