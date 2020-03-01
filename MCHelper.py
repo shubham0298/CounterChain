@@ -36,21 +36,34 @@ class MCClient(mcrpc.RpcClient):
     def receivableItems(self, sellerId, buyerId):
         sellerPubAddr = self.addressOfTxnId(sellerId)
         itemList = []
+        receivedList = self.receivedItems(buyerId)
         if sellerPubAddr:
             for item in self.liststreampublisheritems(self.itemStream, sellerPubAddr):
                 jsonData = item["data"]["json"]
-                if (jsonData["BuyerId"] == buyerId):
+                print(jsonData)
+                if (jsonData["BuyerId"] == buyerId and jsonData["PId"] not in receivedList):
                     itemList.append(jsonData)
+        return itemList
+    
+    def receivedItems(self, buyerId):
+        itemList = []
+        for item in self.liststreampublisheritems(self.itemStream, self.address):
+            jsonData = item["data"]["json"]
+            print(jsonData)
+            if (jsonData["BuyerId"] == buyerId):
+                itemList.append(jsonData["PId"])
         return itemList
 
 class Query:
-    def __init__(self, client, sellerid):
-        self.comlist = client.getstreamitems("Istream")
-        self.idlist = client.getstreamitems("Pstream")
+    def __init__(self, client):
+        self.comlist = client.liststreamitems("Istream")
+        self.idlist = client.liststreamitems("Pstream")
+    
+    def init(self, sellerid):
         self.i = len(self.comlist) - 1
         self.response = "Authentic"
         self.owner = sellerid
-    
+
     def check(self,p):
         flag = 0
         #first iteration

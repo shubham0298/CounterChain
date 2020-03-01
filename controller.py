@@ -1,4 +1,4 @@
-import sys
+import sys, re
 from MCHelper import MCClient, MCNodeCreator, Query
 from SocketHelper import SocketHelper
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -216,7 +216,7 @@ class Controller:
     def show_reg(self):
         self.regwindow = RegWindow()
         self.regwindow.go_back.connect(self.show_login)
-        self.regwindow.init_reg.connect(self.initiate_registration)
+        self.regwindow.init_reg.connect(self.validate_registration)
         self.regwindow.show()
         self.loginwindow.hide()
         self.currentWindow = self.regwindow
@@ -295,11 +295,57 @@ class Controller:
             self.role = result["role"]
             self.show_main()
         elif (result["success"] == True and result["status"] == "PENDING"):
+            self.loginwindow.statusLabel.setText("Verification for your account is under process.")
             print("Verification under process")
         else:
+            self.loginwindow.statusLabel.setText("Incorrect username or password")
             print("{}:Login failed".format(result["status"]))
     
-    def initiate_registration(self):
+    def validate_registration(self):
+        proper = True
+        email_re = r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)"
+        phone_re = r"([0-9]{10,10}$)"
+        emailText = self.regwindow.email_LE.text().strip()
+        nameText = self.regwindow.name_LE.text().strip()
+        paswdText = self.regwindow.paswd_LE.text().strip()
+        phoneText = self.regwindow.phone_LE.text().strip()
+        roleIndex = self.regwindow.role.currentIndex()
+
+        if (emailText == ""):
+            self.regwindow.statusLabel.setText("Email field is empty")
+            proper = False
+        elif not (re.match(email_re, emailText)):
+            self.regwindow.statusLabel.setText("Improper email")
+            proper = False
+        elif (len(paswdText) < 6):
+            self.regwindow.statusLabel.setText("Password should be atleast 6 characters long")
+            proper = False
+        elif (nameText == ""):
+            self.regwindow.statusLabel.setText("Business name field is empty")
+            proper = False
+        elif not (re.match(phone_re, phoneText)):
+            self.regwindow.statusLabel.setText("Improper phone number")
+            proper = False
+        elif (roleIndex == 0):
+            self.regwindow.statusLabel.setText("Select your organisation's role")
+            proper = False
+        
+        if (proper):
+            roles = {
+            1: "Manufacturer",
+            2: "Distributer",
+            3: "Retailer"
+            }
+            newUserData = []
+            newUserData.append(paswdText)
+            newUserData.append(nameText)
+            newUserData.append(roles[roleIndex])
+            newUserData.append(emailText)
+            newUserData.append(phoneText)
+            self.regwindow.statusLabel.setText("")
+            self.initiate_registration(newUserData)
+
+    def initiate_registration(self, newUserData):
         # socket code here
         # upload details and files
         # upload node wallet address
@@ -307,18 +353,7 @@ class Controller:
         rootIP = self.socket.resolve("counterchain.ddns.net")
         rootNode = "CounterChain@" + rootIP + ":7445"
         walletAddress = MCNodeCreator().startMCNode(rpcport, rootNode)
-        roles = {
-            0: "Manufacturer",
-            1: "Distributer",
-            2: "Retailer"
-        }
-        newUserData = []
-        newUserData.append(self.regwindow.paswd_LE.text())
-        newUserData.append(self.regwindow.name_LE.text())
-        newUserData.append(roles[self.regwindow.role.currentIndex()])
-        newUserData.append(walletAddress)
-        newUserData.append(self.regwindow.email_LE.text())
-        newUserData.append(self.regwindow.phone_LE.text())
+        newUserData.insert(3, walletAddress)
 
         result = self.socket.register(newUserData)
         # returns result object
@@ -329,10 +364,12 @@ class Controller:
         # }
 
         if (result["success"] == True):
+            self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
             print("Registration success. Verification under process for address:", walletAddress)
             print("Your user id:", result["userid"])
             self.show_login()
         else:
+            self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
             print("{}:Registration failed".format(result["status"]))
     
     def do_logout(self):
@@ -374,7 +411,7 @@ class Controller:
         sellerId = self.receive.selleridLE.text()
         buyerId = self.userid
         itemList = self.client.receivableItems(sellerId, buyerId)
-        queryProcess = Query(self.client, sellerId)
+        queryProcess = Query(self.client)
 
         self.receive.rcvTable.clear()
         self.receive.rcvTable.setRowCount(0)
@@ -383,6 +420,7 @@ class Controller:
             self.receive.rcvTable.setItem(row, 0, QtWidgets.QTableWidgetItem(items["SellerId"]))
             self.receive.rcvTable.setItem(row, 1, QtWidgets.QTableWidgetItem(items["PId"]))
             self.receive.rcvTable.setItem(row, 2, QtWidgets.QTableWidgetItem(items["PName"]))
+            queryProcess.init(sellerId)
             queryProcess.check(items["PId"])
             self.receive.rcvTable.setItem(row, 3, QtWidgets.QTableWidgetItem(queryProcess.response))
         
