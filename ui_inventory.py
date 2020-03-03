@@ -32,7 +32,7 @@ class Ui_inventory(object):
         self.tableWidget.setGeometry(QtCore.QRect(210, 240, 551, 441))
         self.tableWidget.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.tableWidget.setShowGrid(True)
-        self.tableWidget.setRowCount(20)
+        self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(4)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.verticalHeader().setVisible(True)
@@ -63,6 +63,22 @@ class Ui_inventory(object):
         self.statusbar = QtWidgets.QStatusBar(inventory)
         self.statusbar.setObjectName("statusbar")
         inventory.setStatusBar(self.statusbar)
+
+        head1 = QtWidgets.QTableWidgetItem()
+        head1.setText("Product ID")
+        self.tableWidget.setHorizontalHeaderItem(0,head1)
+
+        head2 = QtWidgets.QTableWidgetItem()
+        head2.setText("Product Name")
+        self.tableWidget.setHorizontalHeaderItem(1,head2)
+
+        head3 = QtWidgets.QTableWidgetItem()
+        head3.setText("Quantity")
+        self.tableWidget.setHorizontalHeaderItem(2,head3)
+
+        head4 = QtWidgets.QTableWidgetItem()
+        head4.setText("Comment")
+        self.tableWidget.setHorizontalHeaderItem(3,head4)
 
         self.retranslateUi(inventory)
         QtCore.QMetaObject.connectSlotsByName(inventory)

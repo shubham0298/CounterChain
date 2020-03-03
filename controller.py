@@ -1,4 +1,5 @@
 import sys, re
+import sqlite3
 from MCHelper import MCClient, MCNodeCreator, Query
 from SocketHelper import SocketHelper
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -259,6 +260,18 @@ class Controller:
         self.invent = InventoryWindow()
         self.invent.go_back.connect(self.show_main)
         self.invent.show()
+
+        conn = sqlite3.connect('drug_stock.db')
+        try:
+            result = conn.execute("SELECT * FROM stocks")
+            for row_no, row_data in enumerate(result):
+                self.invent.tableWidget.setRowCount(row_no+1)
+                for col_no, col_data in enumerate(row_data):
+                    self.invent.tableWidget.setItem(row_no, col_no, QtWidgets.QTableWidgetItem(str(col_data)))
+        except:
+            print("No Table Found!")
+        conn.close()
+
         self.mainwindow.hide()
         self.currentWindow = self.invent
     
@@ -378,16 +391,35 @@ class Controller:
         self.show_login()
         self.client.stop()
     
+    def show_dialog(self, txt):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setText(txt)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msg.exec_()
+
     def add_txn(self):
-        # Generate JSON data
-        jsonData = { "json": {
-            "PId": self.additem.pidLE.text(),
-            "PName": self.additem.pnameLE.text(),
-            "SellerId": self.userid,
-            "BuyerId": self.userid,
-            "Status": "COMPLETE"
-        }}
-        self.client.publishTxn(jsonData)
+        conn = sqlite3.connect('drug_stock.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT)")
+        try:
+            c.execute("INSERT INTO stocks VALUES(?, ?)", (self.additem.pidLE.text(),self.additem.pnameLE.text()))
+            self.show_dialog("Product Registered!")
+            # Generate JSON data
+            jsonData = { "json": {
+                "PId": self.additem.pidLE.text(),
+                "PName": self.additem.pnameLE.text(),
+                "SellerId": self.userid,
+                "BuyerId": self.userid,
+                "Status": "COMPLETE"
+            }}
+            self.client.publishTxn(jsonData)
+        except:
+            self.show_dialog("Product ID Exists!")
+            print("ID Already Exist!")
+        finally:
+            conn.commit()
+            conn.close()
 
     def sell_txn(self):
         # Generate JSON data
