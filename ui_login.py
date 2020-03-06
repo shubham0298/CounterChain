@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\login.ui'
+# Form implementation generated from reading ui file 'login.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -80,7 +80,7 @@ class Ui_loginWindow(object):
         self.label_3.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label_3.setObjectName("label_3")
         self.statusLabel = QtWidgets.QLabel(self.centralwidget)
-        self.statusLabel.setGeometry(QtCore.QRect(350, 180, 400, 30))
+        self.statusLabel.setGeometry(QtCore.QRect(60, 180, 871, 30))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -93,7 +93,7 @@ class Ui_loginWindow(object):
         self.statusLabel.setObjectName("statusLabel")
         loginWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(loginWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
         self.menubar.setObjectName("menubar")
         self.menuCounterChain = QtWidgets.QMenu(self.menubar)
         self.menuCounterChain.setObjectName("menuCounterChain")

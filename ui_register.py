@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file '.\register.ui'
+# Form implementation generated from reading ui file 'register.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -127,11 +127,24 @@ class Ui_registerWindow(object):
         font.setWeight(50)
         self.phone_LE.setFont(font)
         self.phone_LE.setObjectName("phone_LE")
-        self.statusLabel = QtWidgets.QLabel(self.tab)
-        self.statusLabel.setGeometry(QtCore.QRect(280, 400, 400, 120))
-        self.statusLabel.setText("")
-        self.statusLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.statusLabel.setObjectName("statusLabel")
+        self.label_7 = QtWidgets.QLabel(self.tab)
+        self.label_7.setGeometry(QtCore.QRect(70, 380, 141, 30))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setUnderline(False)
+        font.setWeight(75)
+        self.label_7.setFont(font)
+        self.label_7.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.label_7.setObjectName("label_7")
+        self.lic_LE = QtWidgets.QLineEdit(self.tab)
+        self.lic_LE.setGeometry(QtCore.QRect(300, 370, 301, 51))
+        font = QtGui.QFont()
+        font.setBold(False)
+        font.setUnderline(False)
+        font.setWeight(50)
+        self.lic_LE.setFont(font)
+        self.lic_LE.setObjectName("lic_LE")
         self.tabWidget.addTab(self.tab, "")
         self.backButton = QtWidgets.QPushButton(self.centralwidget)
         self.backButton.setGeometry(QtCore.QRect(860, 20, 121, 51))
@@ -163,7 +176,7 @@ class Ui_registerWindow(object):
         self.label_6.setObjectName("label_6")
         registerWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(registerWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 26))
         self.menubar.setObjectName("menubar")
         registerWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(registerWindow)
@@ -186,6 +199,7 @@ class Ui_registerWindow(object):
         self.role.setItemText(1, _translate("registerWindow", "Manufacturer"))
         self.role.setItemText(2, _translate("registerWindow", "Distributer"))
         self.role.setItemText(3, _translate("registerWindow", "Retailer"))
+        self.label_7.setText(_translate("registerWindow", "License no.:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("registerWindow", "Business Information"))
         self.backButton.setText(_translate("registerWindow", "Back"))
         self.submitButton.setText(_translate("registerWindow", "Submit"))

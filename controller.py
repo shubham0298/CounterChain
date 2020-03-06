@@ -322,25 +322,29 @@ class Controller:
         nameText = self.regwindow.name_LE.text().strip()
         paswdText = self.regwindow.paswd_LE.text().strip()
         phoneText = self.regwindow.phone_LE.text().strip()
+        licText = self.regwindow.lic_LE.text().strip()
         roleIndex = self.regwindow.role.currentIndex()
 
         if (emailText == ""):
-            self.regwindow.statusLabel.setText("Email field is empty")
+            self.show_dialog("Enter E-mail ID")
             proper = False
         elif not (re.match(email_re, emailText)):
-            self.regwindow.statusLabel.setText("Improper email")
+            self.show_dialog("Invalid E-mail")
             proper = False
         elif (len(paswdText) < 6):
-            self.regwindow.statusLabel.setText("Password should be atleast 6 characters long")
+            self.show_dialog("Enter password of at least 6 characters")
             proper = False
         elif (nameText == ""):
-            self.regwindow.statusLabel.setText("Business name field is empty")
+            self.show_dialog("Enter name")
             proper = False
         elif not (re.match(phone_re, phoneText)):
-            self.regwindow.statusLabel.setText("Improper phone number")
+            self.show_dialog("Invalid Phone no.")
             proper = False
         elif (roleIndex == 0):
-            self.regwindow.statusLabel.setText("Select your organisation's role")
+            self.show_dialog("Select Role")
+            proper = False
+        elif (licText == ""):
+            self.show_dialog("Enter License number")
             proper = False
         
         if (proper):
@@ -355,6 +359,7 @@ class Controller:
             newUserData.append(roles[roleIndex])
             newUserData.append(emailText)
             newUserData.append(phoneText)
+            # newUserData.append(licText)
             self.regwindow.statusLabel.setText("")
             self.initiate_registration(newUserData)
 
@@ -377,7 +382,8 @@ class Controller:
         # }
 
         if (result["success"] == True):
-            self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
+            # self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
+            self.show_dialog("Registration Successful.")
             print("Registration success. Verification under process for address:", walletAddress)
             print("Your user id:", result["userid"])
             self.show_login()
@@ -401,9 +407,9 @@ class Controller:
     def add_txn(self):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
-        c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT)")
+        c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
         try:
-            c.execute("INSERT INTO stocks VALUES(?, ?)", (self.additem.pidLE.text(),self.additem.pnameLE.text()))
+            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (self.additem.pidLE.text(),self.additem.pnameLE.text(),"-","In Stock"))
             self.show_dialog("Product Registered!")
             # Generate JSON data
             jsonData = { "json": {
@@ -422,15 +428,24 @@ class Controller:
             conn.close()
 
     def sell_txn(self):
-        # Generate JSON data
-        jsonData = { "json" : {
-            "PId": self.sell.pidLE.text(),
-            "PName": "dummy",
-            "SellerId": self.userid,
-            "BuyerId": self.sell.buyeridLE.text(),
-            "Status": "PENDING"
-        }}
-        self.client.publishTxn(jsonData)
+        conn = sqlite3.connect('drug_stock.db')
+        c = conn.cursor()
+        try:
+            c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (int(self.sell.pidLE.text())))
+            conn.commit()
+            # Generate JSON data
+            jsonData = { "json" : {
+                "PId": self.sell.pidLE.text(),
+                "PName": "dummy",
+                "SellerId": self.userid,
+                "BuyerId": self.sell.buyeridLE.text(),
+                "Status": "PENDING"
+            }}
+            self.client.publishTxn(jsonData)
+            self.show_dialog("Product(s) Sold")
+        except:
+            self.show_dialog("Product does not Exists!")
+        conn.close()
     
     def sell_clear(self):
         self.sell.pidLE.clear()
@@ -475,6 +490,7 @@ class Controller:
             }}
             self.client.publishTxn(jsonData)
             self.receive.rcvTable.removeRow(row)
+            self.addToDB(jsonData["json"]["PId"], jsonData["json"]["PName"])
         else:
             print("Counterfeit")
     
@@ -493,9 +509,23 @@ class Controller:
                 }}
                 self.client.publishTxn(jsonData)
                 self.receive.rcvTable.removeRow(row)
+                self.addToDB(jsonData["json"]["PId"], jsonData["json"]["PName"])
             else:
                 row += 1
             rowCount = self.receive.rcvTable.rowCount()
+    
+    def addToDB(self, pid, pname):
+        conn = sqlite3.connect('drug_stock.db')
+        c = conn.cursor()
+        c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
+        try:
+            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (pid,pname,"-","In Stock"))
+            conn.commit()
+            self.show_dialog("Product(s) Received")
+        except:
+            self.show_dialog("Product Already Exists!")
+        conn.close()
+
 
 def main():
     # rpcport = "7077"
