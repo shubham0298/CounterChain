@@ -431,7 +431,7 @@ class Controller:
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         try:
-            c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (int(self.sell.pidLE.text())))
+            c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (self.sell.pidLE.text(),))
             conn.commit()
             # Generate JSON data
             jsonData = { "json" : {
