@@ -444,7 +444,7 @@ class Controller:
             self.client.publishTxn(jsonData)
             self.show_dialog("Product(s) Sold")
         except:
-            self.show_dialog("Product does not Exists!")
+            self.show_dialog("Product(s) out of Stock!")
         conn.close()
     
     def sell_clear(self):
