@@ -1,5 +1,4 @@
-import sys, re
-import sqlite3
+import sys, re, sqlite3
 from MCHelper import MCClient, MCNodeCreator, Query
 from SocketHelper import SocketHelper
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -241,7 +240,7 @@ class Controller:
     def show_sell(self):
         self.sell = SellWindow()
         self.sell.go_back.connect(self.show_main)
-        self.sell.sell_txn.connect(self.sell_txn)
+        self.sell.sell_txn.connect(self.validate_sell_txn)
         self.sell.clear_pid.connect(self.sell_clear)
         self.sell.reset_input.connect(self.sell_reset)
         self.sell.show()
@@ -251,7 +250,7 @@ class Controller:
     def show_additem(self):
         self.additem = AddWindow()
         self.additem.go_back.connect(self.show_main)
-        self.additem.add_product.connect(self.add_txn)
+        self.additem.add_product.connect(self.validate_add_txn)
         self.additem.show()
         self.mainwindow.hide()
         self.currentWindow = self.additem
@@ -284,11 +283,11 @@ class Controller:
         self.receive.show()
         self.mainwindow.hide()
         self.currentWindow = self.receive
-        # self.list_receive()
+        self.rcv_list()
     
     def initiate_login(self):
         # socket code here
-        login_data = [self.loginwindow.id_lineEdit.text(), self.loginwindow.paswd_lineEdit.text()]
+        login_data = [self.loginwindow.id_lineEdit.text().strip(), self.loginwindow.paswd_lineEdit.text().strip()]
         result = self.socket.login(login_data)
         # returns result object
         # result = {
@@ -298,6 +297,8 @@ class Controller:
         #     "role": role
         # }
         if (result["success"] == True and result["status"] == "ACCEPT"):
+            self.loginwindow.statusLabel.setText("")
+
             rpcport = "7077"
             rootIP = self.socket.resolve("counterchain.ddns.net")
             rootNode = "CounterChain@" + rootIP + ":7445"
@@ -359,8 +360,8 @@ class Controller:
             newUserData.append(roles[roleIndex])
             newUserData.append(emailText)
             newUserData.append(phoneText)
-            # newUserData.append(licText)
-            self.regwindow.statusLabel.setText("")
+            newUserData.append(licText)
+            # self.regwindow.statusLabel.setText("")
             self.initiate_registration(newUserData)
 
     def initiate_registration(self, newUserData):
@@ -383,12 +384,13 @@ class Controller:
 
         if (result["success"] == True):
             # self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
-            self.show_dialog("Registration Successful.")
+            self.show_dialog("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
             print("Registration success. Verification under process for address:", walletAddress)
             print("Your user id:", result["userid"])
             self.show_login()
         else:
-            self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
+            # self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
+            self.show_dialog("{}:Registration failed".format(result["status"]))
             print("{}:Registration failed".format(result["status"]))
     
     def do_logout(self):
@@ -404,13 +406,27 @@ class Controller:
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec_()
 
-    def add_txn(self):
+    def validate_add_txn(self):
+        proper = True
+        pidText = self.additem.pidLE.text().strip()
+        pnameText = self.additem.pnameLE.text().strip()
+
+        if (len(pidText) == 0):
+            self.show_dialog("Enter Product ID")
+            proper = False
+        elif (len(pnameText) == 0):
+            self.show_dialog("Enter Product Name")
+            proper = False
+        
+        if proper:
+            self.add_txn([pidText, pnameText])
+    
+    def add_txn(self, productData):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
         try:
-            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (self.additem.pidLE.text(),self.additem.pnameLE.text(),"-","In Stock"))
-            self.show_dialog("Product Registered!")
+            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (productData[0], productData[1], "-", "In Stock"))
             # Generate JSON data
             jsonData = { "json": {
                 "PId": self.additem.pidLE.text(),
@@ -420,6 +436,7 @@ class Controller:
                 "Status": "COMPLETE"
             }}
             self.client.publishTxn(jsonData)
+            self.show_dialog("Product Registered!")
         except:
             self.show_dialog("Product ID Exists!")
             print("ID Already Exist!")
@@ -427,24 +444,50 @@ class Controller:
             conn.commit()
             conn.close()
 
-    def sell_txn(self):
+    def validate_sell_txn(self):
+        proper = True
+        pidText = self.sell.pidLE.text().strip()
+        buyeridText = self.sell.buyeridLE.text().strip()
+
+        if (len(pidText) == 0):
+            self.show_dialog("Enter Product ID")
+            proper = False
+        elif (len(buyeridText) == 0):
+            self.show_dialog("Enter Buyer ID")
+            proper = False
+        elif not (self.client.userExists(buyeridText)):
+            self.show_dialog("No such buyer exists")
+            proper = False
+        
+        if proper:
+            self.sell_txn([pidText, buyeridText])
+    
+    def sell_txn(self, sellData):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
-        try:
-            c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (self.sell.pidLE.text(),))
-            conn.commit()
-            # Generate JSON data
-            jsonData = { "json" : {
-                "PId": self.sell.pidLE.text(),
-                "PName": "dummy",
-                "SellerId": self.userid,
-                "BuyerId": self.sell.buyeridLE.text(),
-                "Status": "PENDING"
-            }}
-            self.client.publishTxn(jsonData)
-            self.show_dialog("Product(s) Sold")
-        except:
+        
+        c.execute('''SELECT status from stocks where pid=?''', (sellData[0],))
+        status = c.fetchone()
+        if (len(status) == 0):
+            self.show_dialog("No such product")
+        elif (status[0] == "Sold Out"):
             self.show_dialog("Product(s) out of Stock!")
+        else:
+            try:
+                c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (sellData[0],))
+                # Generate JSON data
+                jsonData = { "json" : {
+                    "PId": sellData[0],
+                    "PName": "dummy",
+                    "SellerId": self.userid,
+                    "BuyerId": sellData[1],
+                    "Status": "PENDING"
+                }}
+                self.client.publishTxn(jsonData)
+                self.show_dialog("Product(s) Sold")
+                conn.commit()
+            except:
+                self.show_dialog("Error: Unable to sell")
         conn.close()
     
     def sell_clear(self):
@@ -455,9 +498,9 @@ class Controller:
         self.sell.buyeridLE.clear()
     
     def rcv_list(self):
-        sellerId = self.receive.selleridLE.text()
+        # sellerId = self.receive.selleridLE.text()
         buyerId = self.userid
-        itemList = self.client.receivableItems(sellerId, buyerId)
+        itemList = self.client.receivableItems(buyerId)
         queryProcess = Query(self.client)
 
         self.receive.rcvTable.clear()
@@ -467,7 +510,7 @@ class Controller:
             self.receive.rcvTable.setItem(row, 0, QtWidgets.QTableWidgetItem(items["SellerId"]))
             self.receive.rcvTable.setItem(row, 1, QtWidgets.QTableWidgetItem(items["PId"]))
             self.receive.rcvTable.setItem(row, 2, QtWidgets.QTableWidgetItem(items["PName"]))
-            queryProcess.init(sellerId)
+            queryProcess.init(items["SellerId"])
             queryProcess.check(items["PId"])
             self.receive.rcvTable.setItem(row, 3, QtWidgets.QTableWidgetItem(queryProcess.response))
         
@@ -490,7 +533,7 @@ class Controller:
             }}
             self.client.publishTxn(jsonData)
             self.receive.rcvTable.removeRow(row)
-            self.addToDB(jsonData["json"]["PId"], jsonData["json"]["PName"])
+            self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
         else:
             print("Counterfeit")
     
@@ -509,17 +552,17 @@ class Controller:
                 }}
                 self.client.publishTxn(jsonData)
                 self.receive.rcvTable.removeRow(row)
-                self.addToDB(jsonData["json"]["PId"], jsonData["json"]["PName"])
+                self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
             else:
                 row += 1
             rowCount = self.receive.rcvTable.rowCount()
     
-    def addToDB(self, pid, pname):
+    def add_to_stock(self, pid, pname):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
         try:
-            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (pid,pname,"-","In Stock"))
+            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (pid, pname, "-", "In Stock"))
             conn.commit()
             self.show_dialog("Product(s) Received")
         except:

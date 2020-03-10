@@ -33,16 +33,22 @@ class MCClient(mcrpc.RpcClient):
                 return jsonData["Publisher"]
         return None
     
-    def receivableItems(self, sellerId, buyerId):
-        sellerPubAddr = self.addressOfTxnId(sellerId)
+    def userExists(self, txnId):
+        for item in self.liststreamitems(self.publisherStream):
+            jsonData = item["data"]["json"]
+            if (jsonData["Txnid"] == txnId):
+                return True
+        return False
+    
+    def receivableItems(self, buyerId):
         itemList = []
         receivedList = self.receivedItems(buyerId)
-        if sellerPubAddr:
-            for item in self.liststreampublisheritems(self.itemStream, sellerPubAddr):
-                jsonData = item["data"]["json"]
-                print(jsonData)
-                if (jsonData["BuyerId"] == buyerId and jsonData["PId"] not in receivedList):
-                    itemList.append(jsonData)
+
+        for item in self.liststreamitems(self.itemStream):
+            jsonData = item["data"]["json"]
+            print(jsonData)
+            if (jsonData["BuyerId"] == buyerId and jsonData["Status"] == "PENDING" and jsonData["PId"] not in receivedList):
+                itemList.append(jsonData)
         return itemList
     
     def receivedItems(self, buyerId):

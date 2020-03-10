@@ -58,47 +58,6 @@
      <set>Qt::AlignCenter</set>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>250</y>
-      <width>111</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>14</pointsize>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="cursor">
-     <cursorShape>IBeamCursor</cursorShape>
-    </property>
-    <property name="text">
-     <string>Seller ID:</string>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="selleridLE">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>250</y>
-      <width>251</width>
-      <height>36</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
-    </property>
-   </widget>
    <widget class="QPushButton" name="rcvButton">
     <property name="geometry">
      <rect>
@@ -183,7 +142,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Check</string>
+     <string>Refresh</string>
     </property>
    </widget>
    <widget class="QTableWidget" name="rcvTable">

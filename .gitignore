@@ -1,3 +1,4 @@
 # Exclude chains folder as it is maintained by local MultiChain client
 chains/**
 drug_stock.db
+__pycache__/**
