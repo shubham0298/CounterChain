@@ -123,6 +123,17 @@ class SellWindow(QtWidgets.QMainWindow, Ui_SellWindow):
         self.clearButton.clicked.connect(self.clearbutton_handler)
         self.resetButton.clicked.connect(self.resetbutton_handler)
 
+        conn = sqlite3.connect('drug_stock.db')
+        c = conn.cursor()
+        c.execute("SELECT pid FROM stocks")
+        lst = []
+        for i,row in enumerate(list(c.fetchall())):
+	        lst.append(row[0])
+
+        completer = QtWidgets.QCompleter(lst)
+        self.pidLE.setCompleter(completer)
+        conn.close()
+
     def homebutton_handler(self):
         self.go_back.emit()
     
@@ -188,7 +199,8 @@ class InventoryWindow(QtWidgets.QMainWindow, Ui_inventory):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
-
+        self.tableWidget.setHorizontalHeaderLabels(["Product ID", "Product Name", "Product Quantity", "Status"])
+        
         self.pushButton.clicked.connect(self.homebutton_handler)
 
     def homebutton_handler(self):
@@ -402,6 +414,7 @@ class Controller:
     def show_dialog(self, txt):
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setWindowTitle("CounterChain")
         msg.setText(txt)
         msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
         msg.exec_()
