@@ -8,6 +8,7 @@ from ui_receive import Ui_ReceiveWindow
 from ui_inventory import Ui_inventory
 from ui_itemadd import Ui_itemadd
 from ui_login import Ui_loginWindow
+from ui_aboutus import Ui_aboutus
 from ui_register import Ui_registerWindow
 from ui_dashboardother import Ui_DashboardWindow_other
 
@@ -15,12 +16,14 @@ class LoginWindow(QtWidgets.QMainWindow, Ui_loginWindow):
 
     open_dash = QtCore.pyqtSignal()
     open_reg = QtCore.pyqtSignal()
+    open_aboutus = QtCore.pyqtSignal()
 
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
 
         self.login.clicked.connect(self.loginbutton_handler)
+        self.aboutus.clicked.connect(self.aboutbutton_handler)
         self.register_2.clicked.connect(self.regbutton_handler)
 
     def loginbutton_handler(self):
@@ -28,6 +31,22 @@ class LoginWindow(QtWidgets.QMainWindow, Ui_loginWindow):
 
     def regbutton_handler(self):
         self.open_reg.emit()
+    
+    def aboutbutton_handler(self):
+        self.open_aboutus.emit()
+
+class AboutUsWindow(QtWidgets.QMainWindow, Ui_aboutus):
+
+    close_about = QtCore.pyqtSignal()
+
+    def __init__(self):
+        QtWidgets.QMainWindow.__init__(self)
+        self.setupUi(self)
+
+        self.backButton.clicked.connect(self.homebutton_handler)
+
+    def homebutton_handler(self):
+        self.close_about.emit()
 
 class RegWindow(QtWidgets.QMainWindow, Ui_registerWindow):
 
@@ -220,10 +239,17 @@ class Controller:
         self.loginwindow = LoginWindow()
         self.loginwindow.open_dash.connect(self.initiate_login)
         self.loginwindow.open_reg.connect(self.show_reg)
+        self.loginwindow.open_aboutus.connect(self.show_aboutus)
         self.loginwindow.show()
         if (self.currentWindow):
             self.currentWindow.close()
         self.currentWindow = self.loginwindow
+
+    def show_aboutus(self):
+        self.aboutwindow = AboutUsWindow()
+        self.aboutwindow.close_about.connect(self.show_login)
+        self.aboutwindow.show()
+        self.currentWindow = self.aboutwindow
 
     def show_reg(self):
         self.regwindow = RegWindow()
