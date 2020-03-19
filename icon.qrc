@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="icon">
+    <file>Icons/passwd.png</file>
+    <file>Icons/username.png</file>
     <file>logo.png</file>
   </qresource>
 </RCC>

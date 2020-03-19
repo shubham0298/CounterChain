@@ -21,10 +21,28 @@ class Ui_SellWindow(object):
         SellWindow.setSizePolicy(sizePolicy)
         SellWindow.setMinimumSize(QtCore.QSize(1000, 800))
         SellWindow.setMaximumSize(QtCore.QSize(1000, 800))
+        SellWindow.setStyleSheet("QMainWindow{\n"
+"    background-color: rgb(85, 85, 127);\n"
+"}\n"
+"QLineEdit{    \n"
+"    background-color: rgb(154, 154, 229);\n"
+"}\n"
+"QPushButton#homeButton{\n"
+"    background-color: rgb(255, 0, 0);\n"
+"}\n"
+"QPushButton#sellConfirmButton{\n"
+"    background-color: rgb(0, 170, 255);\n"
+"}\n"
+"QPushButton#resetButton{\n"
+"    background-color: rgb(165, 165, 165);\n"
+"}\n"
+"QPushButton#clearButton{\n"
+"    background-color: rgb(165, 165, 165);\n"
+"}")
         self.centralwidget = QtWidgets.QWidget(SellWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.sellConfirmButton = QtWidgets.QPushButton(self.centralwidget)
-        self.sellConfirmButton.setGeometry(QtCore.QRect(610, 560, 121, 51))
+        self.sellConfirmButton.setGeometry(QtCore.QRect(350, 560, 121, 51))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -45,6 +63,10 @@ class Ui_SellWindow(object):
         font.setWeight(75)
         self.homeButton.setFont(font)
         self.homeButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Icons/backbutton.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.homeButton.setIcon(icon)
+        self.homeButton.setIconSize(QtCore.QSize(30, 30))
         self.homeButton.setObjectName("homeButton")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(380, 150, 231, 61))
@@ -59,6 +81,17 @@ class Ui_SellWindow(object):
         self.label.setObjectName("label")
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setGeometry(QtCore.QRect(30, 0, 211, 71))
+        palette = QtGui.QPalette()
+        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
+        brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
+        brush.setStyle(QtCore.Qt.SolidPattern)
+        palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
+        self.label_5.setPalette(palette)
         font = QtGui.QFont()
         font.setPointSize(18)
         font.setBold(True)
@@ -68,13 +101,13 @@ class Ui_SellWindow(object):
         self.label_5.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label_5.setObjectName("label_5")
         self.buyeridLE = QtWidgets.QLineEdit(self.centralwidget)
-        self.buyeridLE.setGeometry(QtCore.QRect(460, 390, 301, 51))
+        self.buyeridLE.setGeometry(QtCore.QRect(440, 410, 301, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.buyeridLE.setFont(font)
         self.buyeridLE.setObjectName("buyeridLE")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(290, 390, 151, 41))
+        self.label_2.setGeometry(QtCore.QRect(270, 410, 151, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -83,13 +116,13 @@ class Ui_SellWindow(object):
         self.label_2.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label_2.setObjectName("label_2")
         self.pidLE = QtWidgets.QLineEdit(self.centralwidget)
-        self.pidLE.setGeometry(QtCore.QRect(460, 290, 301, 51))
+        self.pidLE.setGeometry(QtCore.QRect(440, 310, 301, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.pidLE.setFont(font)
         self.pidLE.setObjectName("pidLE")
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(290, 290, 121, 51))
+        self.label_6.setGeometry(QtCore.QRect(270, 310, 121, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -98,7 +131,7 @@ class Ui_SellWindow(object):
         self.label_6.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
         self.label_6.setObjectName("label_6")
         self.resetButton = QtWidgets.QPushButton(self.centralwidget)
-        self.resetButton.setGeometry(QtCore.QRect(350, 560, 121, 51))
+        self.resetButton.setGeometry(QtCore.QRect(570, 560, 121, 51))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -112,7 +145,7 @@ class Ui_SellWindow(object):
         self.resetButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.resetButton.setObjectName("resetButton")
         self.clearButton = QtWidgets.QPushButton(self.centralwidget)
-        self.clearButton.setGeometry(QtCore.QRect(810, 290, 121, 51))
+        self.clearButton.setGeometry(QtCore.QRect(810, 310, 121, 51))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -126,19 +159,11 @@ class Ui_SellWindow(object):
         self.clearButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.clearButton.setObjectName("clearButton")
         SellWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtWidgets.QMenuBar(SellWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1000, 21))
-        self.menubar.setObjectName("menubar")
-        self.menuCounterChain = QtWidgets.QMenu(self.menubar)
-        self.menuCounterChain.setObjectName("menuCounterChain")
-        SellWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(SellWindow)
         self.statusbar.setObjectName("statusbar")
         SellWindow.setStatusBar(self.statusbar)
         self.actionExit = QtWidgets.QAction(SellWindow)
         self.actionExit.setObjectName("actionExit")
-        self.menuCounterChain.addAction(self.actionExit)
-        self.menubar.addAction(self.menuCounterChain.menuAction())
 
         self.retranslateUi(SellWindow)
         QtCore.QMetaObject.connectSlotsByName(SellWindow)
@@ -147,14 +172,13 @@ class Ui_SellWindow(object):
         _translate = QtCore.QCoreApplication.translate
         SellWindow.setWindowTitle(_translate("SellWindow", "CounterChain - Sell Items"))
         self.sellConfirmButton.setText(_translate("SellWindow", "Confirm"))
-        self.homeButton.setText(_translate("SellWindow", "Back"))
+        self.homeButton.setText(_translate("SellWindow", " Back"))
         self.label.setText(_translate("SellWindow", "Sell Items"))
         self.label_5.setText(_translate("SellWindow", "CounterChain"))
         self.label_2.setText(_translate("SellWindow", "Buyer ID:"))
         self.label_6.setText(_translate("SellWindow", "Product ID:"))
         self.resetButton.setText(_translate("SellWindow", "Reset"))
         self.clearButton.setText(_translate("SellWindow", "Clear PID"))
-        self.menuCounterChain.setTitle(_translate("SellWindow", "CounterChain"))
         self.actionExit.setText(_translate("SellWindow", "Exit"))
 
 

@@ -16,28 +16,49 @@ class Ui_loginWindow(object):
         loginWindow.resize(1000, 800)
         loginWindow.setMinimumSize(QtCore.QSize(1000, 800))
         loginWindow.setMaximumSize(QtCore.QSize(1000, 800))
+        loginWindow.setStyleSheet("QMainWindow{\n"
+"    background-color: rgb(85, 85, 127);\n"
+"}\n"
+"QLineEdit{    \n"
+"    background-color: rgb(154, 154, 229);\n"
+"}\n"
+"QPushButton#register_2{\n"
+"    background-color: rgb(255, 0, 0);\n"
+"}\n"
+"QPushButton#login{\n"
+"    background-color: rgb(0, 170, 255);\n"
+"}\n"
+"QPushButton#aboutus{\n"
+"    background-color: rgb(0, 170, 0);\n"
+"}")
         self.centralwidget = QtWidgets.QWidget(loginWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(260, 460, 131, 81))
+        self.label_2.setGeometry(QtCore.QRect(290, 460, 101, 71))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.label_2.setFont(font)
         self.label_2.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.label_2.setText("")
+        self.label_2.setPixmap(QtGui.QPixmap(":/icon/Icons/passwd.png"))
+        self.label_2.setScaledContents(True)
         self.label_2.setObjectName("label_2")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(260, 380, 101, 51))
+        self.label.setGeometry(QtCore.QRect(300, 360, 81, 71))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.label.setFont(font)
         self.label.setCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
+        self.label.setText("")
+        self.label.setPixmap(QtGui.QPixmap(":/icon/Icons/username.png"))
+        self.label.setScaledContents(True)
         self.label.setObjectName("label")
         self.login = QtWidgets.QPushButton(self.centralwidget)
-        self.login.setGeometry(QtCore.QRect(320, 620, 121, 51))
+        self.login.setGeometry(QtCore.QRect(370, 610, 121, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -46,7 +67,7 @@ class Ui_loginWindow(object):
         self.login.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.login.setObjectName("login")
         self.register_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.register_2.setGeometry(QtCore.QRect(560, 620, 121, 51))
+        self.register_2.setGeometry(QtCore.QRect(570, 610, 121, 51))
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -55,17 +76,17 @@ class Ui_loginWindow(object):
         self.register_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.register_2.setObjectName("register_2")
         self.paswd_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.paswd_lineEdit.setGeometry(QtCore.QRect(420, 480, 301, 51))
+        self.paswd_lineEdit.setGeometry(QtCore.QRect(400, 470, 321, 61))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.paswd_lineEdit.setFont(font)
         self.paswd_lineEdit.setInputMethodHints(QtCore.Qt.ImhHiddenText|QtCore.Qt.ImhNoAutoUppercase|QtCore.Qt.ImhNoPredictiveText|QtCore.Qt.ImhSensitiveData)
         self.paswd_lineEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.paswd_lineEdit.setObjectName("paswd_lineEdit")
         self.id_lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.id_lineEdit.setGeometry(QtCore.QRect(420, 380, 301, 51))
+        self.id_lineEdit.setGeometry(QtCore.QRect(400, 370, 321, 61))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setPointSize(13)
         self.id_lineEdit.setFont(font)
         self.id_lineEdit.setInputMethodHints(QtCore.Qt.ImhNone)
         self.id_lineEdit.setObjectName("id_lineEdit")
@@ -82,7 +103,7 @@ class Ui_loginWindow(object):
         self.statusLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.statusLabel.setObjectName("statusLabel")
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(360, 50, 341, 241))
+        self.label_3.setGeometry(QtCore.QRect(330, 10, 381, 281))
         self.label_3.setText("")
         self.label_3.setPixmap(QtGui.QPixmap(":/icon/logo.png"))
         self.label_3.setScaledContents(True)
@@ -134,8 +155,6 @@ class Ui_loginWindow(object):
     def retranslateUi(self, loginWindow):
         _translate = QtCore.QCoreApplication.translate
         loginWindow.setWindowTitle(_translate("loginWindow", "Login"))
-        self.label_2.setText(_translate("loginWindow", "Password:"))
-        self.label.setText(_translate("loginWindow", "Login ID:"))
         self.login.setText(_translate("loginWindow", "Login"))
         self.register_2.setText(_translate("loginWindow", "Register"))
         self.aboutus.setText(_translate("loginWindow", "About Us"))
