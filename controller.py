@@ -234,6 +234,7 @@ class Controller:
         self.userid = None
         self.role = None
         self.socket = SocketHelper()
+        self.nodeCreator = MCNodeCreator()
     
     def show_login(self):
         self.loginwindow = LoginWindow()
@@ -340,12 +341,20 @@ class Controller:
             rpcport = "7077"
             rootIP = self.socket.resolve("counterchain.ddns.net")
             rootNode = "CounterChain@" + rootIP + ":7445"
-            rpcpassword = MCNodeCreator().startMCNode(rpcport, rootNode)
-            self.client = MCClient("localhost", rpcport, "multichainrpc", rpcpassword)
+            self.nodeCreator.startMCNode(rpcport, rootNode)
+            if (self.nodeCreator.status is None):
+                self.show_dialog("Unable to start MultiChain process")
+                return
+            
+            if (self.nodeCreator.status == MCNodeCreator.HAS_PASSWORD):
+                self.client = MCClient("localhost", rpcport, "multichainrpc", self.nodeCreator.rpcpassword)
 
-            self.userid = result["userid"]
-            self.role = result["role"]
-            self.show_main()
+            if (self.client.status == MCClient.GOOD):
+                self.userid = result["userid"]
+                self.role = result["role"]
+                self.show_main()
+            else:
+                self.show_dialog("Unable to connect to MultiChain RPC-Server")
         elif (result["success"] == True and result["status"] == "PENDING"):
             self.loginwindow.statusLabel.setText("Verification for your account is under process.")
             print("Verification under process")
@@ -409,33 +418,37 @@ class Controller:
         rpcport = "7077"
         rootIP = self.socket.resolve("counterchain.ddns.net")
         rootNode = "CounterChain@" + rootIP + ":7445"
-        walletAddress = MCNodeCreator().startMCNode(rpcport, rootNode)
-        newUserData.insert(3, walletAddress)
+        self.nodeCreator.initMCNode(rpcport, rootNode)
+        if (self.nodeCreator.status is None):
+            self.show_dialog("Unable to initiate MultiChain Node")
+            return
+        
+        if (self.nodeCreator.status == MCNodeCreator.HAS_WALLET_ADDRESS):
+            newUserData.insert(3, self.nodeCreator.walletAddress)
+            result = self.socket.register(newUserData)
+            # returns result object
+            # result = {
+            #     "success": True,
+            #     "status": "PENDING", or Error msg
+            #     "userID": txn_id
+            # }
 
-        result = self.socket.register(newUserData)
-        # returns result object
-        # result = {
-        #     "success": True,
-        #     "status": "PENDING", or Error msg
-        #     "userID": txn_id
-        # }
-
-        if (result["success"] == True):
-            # self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
-            self.show_dialog("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
-            print("Registration success. Verification under process for address:", walletAddress)
-            print("Your user id:", result["userid"])
-            self.show_login()
-        else:
-            # self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
-            self.show_dialog("{}:Registration failed".format(result["status"]))
-            print("{}:Registration failed".format(result["status"]))
+            if (result["success"] == True):
+                # self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
+                self.show_dialog("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
+                print("Registration success. Verification under process for address:", self.nodeCreator.walletAddress)
+                print("Your user id:", result["userid"])
+                self.show_login()
+            else:
+                # self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
+                self.show_dialog("{}:Registration failed".format(result["status"]))
+                print("{}:Registration failed".format(result["status"]))
     
     def do_logout(self):
         if (self.mainwindow):
             self.mainwindow.close()
-        self.show_login()
         self.client.stop()
+        self.show_login()
     
     def show_dialog(self, txt):
         msg = QtWidgets.QMessageBox()
@@ -465,17 +478,20 @@ class Controller:
         c = conn.cursor()
         c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
         try:
-            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (productData[0], productData[1], "-", "In Stock"))
             # Generate JSON data
             jsonData = { "json": {
-                "PId": self.additem.pidLE.text(),
-                "PName": self.additem.pnameLE.text(),
+                "PId": productData[0],
+                "PName": productData[1],
                 "SellerId": self.userid,
                 "BuyerId": self.userid,
                 "Status": "COMPLETE"
             }}
             self.client.publishTxn(jsonData)
-            self.show_dialog("Product Registered!")
+            if (self.client.status == MCClient.PUBLISH_ERROR):
+                self.show_dialog("Unable to add product")
+            else:
+                c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (productData[0], productData[1], "-", "In Stock"))
+                self.show_dialog("Product Registered!")
         except:
             self.show_dialog("Product ID Exists!")
             print("ID Already Exist!")
@@ -494,8 +510,11 @@ class Controller:
         elif (len(buyeridText) == 0):
             self.show_dialog("Enter Buyer ID")
             proper = False
-        elif not (self.client.userExists(buyeridText)):
+        elif (not self.client.userExists(buyeridText) and self.client.status == MCClient.GOOD):
             self.show_dialog("No such buyer exists")
+            proper = False
+        elif (self.client.status == MCClient.STREAM_ERROR):
+            self.show_dialog("Unable to fetch buyer list")
             proper = False
         
         if proper:
@@ -512,21 +531,21 @@ class Controller:
         elif (status[0] == "Sold Out"):
             self.show_dialog("Product(s) out of Stock!")
         else:
-            try:
+            # Generate JSON data
+            jsonData = { "json" : {
+                "PId": sellData[0],
+                "PName": "dummy",
+                "SellerId": self.userid,
+                "BuyerId": sellData[1],
+                "Status": "PENDING"
+            }}
+            self.client.publishTxn(jsonData)
+            if (self.client.status == MCClient.PUBLISH_ERROR):
+                self.show_dialog("Unable to sell product")
+            else:
                 c.execute('''UPDATE stocks SET status="Sold Out" WHERE pid=?''', (sellData[0],))
-                # Generate JSON data
-                jsonData = { "json" : {
-                    "PId": sellData[0],
-                    "PName": "dummy",
-                    "SellerId": self.userid,
-                    "BuyerId": sellData[1],
-                    "Status": "PENDING"
-                }}
-                self.client.publishTxn(jsonData)
                 self.show_dialog("Product(s) Sold")
                 conn.commit()
-            except:
-                self.show_dialog("Error: Unable to sell")
         conn.close()
     
     def sell_clear(self):
@@ -540,6 +559,9 @@ class Controller:
         # sellerId = self.receive.selleridLE.text()
         buyerId = self.userid
         itemList = self.client.receivableItems(buyerId)
+        if (self.client.status != MCClient.GOOD):
+            self.show_dialog("Unable to fetch transaction list")
+            return
         queryProcess = Query(self.client)
 
         self.receive.rcvTable.clear()
@@ -561,7 +583,7 @@ class Controller:
         selectedItem = self.receive.rcvTable.currentItem()
         row =  self.receive.rcvTable.row(selectedItem)
 
-        if (self.receive.rcvTable.item(row, 3).text() == "Authentic"):
+        if (selectedItem and self.receive.rcvTable.item(row, 3).text() == "Authentic"):
             # Generate JSON data
             jsonData = { "json" : {
                 "PId": self.receive.rcvTable.item(row, 1).text(),
@@ -571,8 +593,11 @@ class Controller:
                 "Status": "COMPLETE"
             }}
             self.client.publishTxn(jsonData)
-            self.receive.rcvTable.removeRow(row)
-            self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
+            if (self.client.status == MCClient.GOOD):
+                self.receive.rcvTable.removeRow(row)
+                self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
+            else:
+                self.show_dialog("Unable to receive product")
         else:
             print("Counterfeit")
     
@@ -590,8 +615,11 @@ class Controller:
                     "Status": "COMPLETE"
                 }}
                 self.client.publishTxn(jsonData)
-                self.receive.rcvTable.removeRow(row)
-                self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
+                if (self.client.status == MCClient.GOOD):
+                    self.receive.rcvTable.removeRow(row)
+                    self.add_to_stock(jsonData["json"]["PId"], jsonData["json"]["PName"])
+                else:
+                    self.show_dialog("Unable to receive product")
             else:
                 row += 1
             rowCount = self.receive.rcvTable.rowCount()

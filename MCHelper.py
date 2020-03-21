@@ -1,64 +1,106 @@
 import mcrpc
 import os, subprocess, time
+import hashlib
 
 class MCClient(mcrpc.RpcClient):
 
+    GOOD = 0
+    SUBSCRIBE_ERROR = 1
+    PUBLISH_ERROR = 2
+    STREAM_ERROR = 3
+
     def __init__(self, host, port, user, pwd, use_ssl=False):
         super().__init__(host, port, user, pwd, use_ssl=use_ssl)
+        self.status = None
 
         # Get my address
-        addressList = self.listaddresses()
-        for address in addressList:
-            if (address['ismine']):
-                self.address = address['address']
-                break
-
-        print("My address:",self.address)
+        try:
+            addressList = self.listaddresses()
+            for address in addressList:
+                if (address['ismine']):
+                    self.address = address['address']
+                    break
+            print("My address:",self.address)
+        except Exception as e:
+            print(e)
+            return
 
         # Subscribe to tutorial stream
         self.itemStream = "Istream"
         self.publisherStream = "Pstream"
-        self.subscribe(self.itemStream)
-        self.subscribe(self.publisherStream)
+        try:
+            self.subscribe(self.itemStream)
+            self.subscribe(self.publisherStream)
+        except Exception as e:
+            print(e)
+            self.status = self.SUBSCRIBE_ERROR
+            return
+        self.status = self.GOOD
+        self.key = hashlib.sha1(bytes(pwd, "utf-8")).hexdigest()
     
     def publishTxn(self, jsonData):
         # Publish data to tutorial stream
-        clientKey = "clientKey"
-        self.publish(self.itemStream, clientKey, jsonData)
+        try:
+            self.status = self.GOOD
+            self.publish(self.itemStream, self.key, jsonData)
+        except Exception as e:
+            print(e)
+            self.status = self.PUBLISH_ERROR
     
-    def addressOfTxnId(self, txnId):
-        for item in self.liststreamitems(self.publisherStream):
-            jsonData = item["data"]["json"]
-            if (jsonData["Txnid"] == txnId):
-                return jsonData["Publisher"]
-        return None
+    # def addressOfTxnId(self, txnId):
+    #     for item in self.liststreamitems(self.publisherStream):
+    #         jsonData = item["data"]["json"]
+    #         if (jsonData["Txnid"] == txnId):
+    #             return jsonData["Publisher"]
+    #     return None
     
     def userExists(self, txnId):
-        for item in self.liststreamitems(self.publisherStream):
-            jsonData = item["data"]["json"]
-            if (jsonData["Txnid"] == txnId):
-                return True
-        return False
+        try:
+            self.status = self.GOOD
+            for item in self.liststreamitems(self.publisherStream):
+                jsonData = item["data"]["json"]
+                if (jsonData["Txnid"] == txnId):
+                    return True
+            return False
+        except Exception as e:
+            print(e)
+            self.status = self.STREAM_ERROR
+            return None
     
     def receivableItems(self, buyerId):
         itemList = []
         receivedList = self.receivedItems(buyerId)
+        
+        if (receivedList is None):
+            return None
 
-        for item in self.liststreamitems(self.itemStream):
-            jsonData = item["data"]["json"]
-            print(jsonData)
-            if (jsonData["BuyerId"] == buyerId and jsonData["Status"] == "PENDING" and jsonData["PId"] not in receivedList):
-                itemList.append(jsonData)
-        return itemList
+        try:
+            self.status = self.GOOD
+            for item in self.liststreamitems(self.itemStream):
+                jsonData = item["data"]["json"]
+                print(jsonData)
+                if (jsonData["BuyerId"] == buyerId and jsonData["Status"] == "PENDING" and jsonData["PId"] not in receivedList):
+                    itemList.append(jsonData)
+            return itemList
+        except Exception as e:
+            print(e)
+            self.status = self.STREAM_ERROR
+            return None
     
     def receivedItems(self, buyerId):
         itemList = []
-        for item in self.liststreampublisheritems(self.itemStream, self.address):
-            jsonData = item["data"]["json"]
-            print(jsonData)
-            if (jsonData["BuyerId"] == buyerId):
-                itemList.append(jsonData["PId"])
-        return itemList
+        try:
+            self.status = self.GOOD
+            for item in self.liststreampublisheritems(self.itemStream, self.address):
+                jsonData = item["data"]["json"]
+                print(jsonData)
+                if (jsonData["BuyerId"] == buyerId):
+                    itemList.append(jsonData["PId"])
+            return itemList
+        except Exception as e:
+            print(e)
+            self.status = self.STREAM_ERROR
+            return None
 
 class Query:
     def __init__(self, client):
@@ -120,49 +162,64 @@ class Query:
             self.response="Counterfeit"
 
 class MCNodeCreator:
+    
+    HAS_PASSWORD = 1
+    HAS_WALLET_ADDRESS = 2
 
     def __init__(self):
-        pass
+        self.root = os.getcwd()
+        self.datadir = self.root + "\\chains"
+        self.bindir = self.root + "\\bin"
+        self.configFile = self.datadir + "\\CounterChain\\multichain.conf"
+        self.status = None
+        self.walletAddress = None
+        self.rpcpassword = None
+        self.proc = None
 
-    def startMCNode(self, port, rootNode):
-        cwd = os.getcwd()
-        print(cwd)
+    def initPath(self):
+        os.chdir(self.root)
 
-        datadir = cwd + "\\chains"
-        print(datadir)
-        print(os.path.isdir(datadir))
-        bindir = cwd + "\\bin"
-        print(bindir)
-        print(os.path.isdir(bindir))
-
+    def initMCNode(self, localRpcPort, rootNode):
         # port = "7077"
-        # rootNode = "CounterChain@13.233.74.156:7445"
+        # rootNode = "CounterChain@counterchain.ddns.net:7445"
+        self.initPath()
+        os.chdir(self.bindir)
 
-        os.chdir(bindir)
-        print(os.getcwd())
-        print("Starting MultiChain Node...")
-        proc = subprocess.Popen(["multichaind", "-datadir="+datadir, "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
-        # proc = subprocess.Popen(["multichaind", "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
-        os.chdir(cwd)
+        self.proc = subprocess.Popen(["multichaind", "-datadir="+self.datadir, "-rpcport="+localRpcPort, rootNode], stdout=subprocess.PIPE, text=True)
+        # self.proc = subprocess.Popen(["multichaind", "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
         try:
-            outs, errs = proc.communicate(timeout=5)
+            outs, errs = self.proc.communicate(timeout=5)
             # Permissions not granted i.e not yet registered
             outs = outs.split()
-            walletAddress = outs[outs.index("multichain-cli") + 3]
-            return walletAddress
+            self.walletAddress = outs[outs.index("multichain-cli") + 3]
+            self.status = self.HAS_WALLET_ADDRESS
         except subprocess.TimeoutExpired:
-            # Node initialised successfully, now connect to rpcport
-            # Get password
+            self.proc.kill()
+            self.status = None
+
+    def startMCNode(self, localRpcPort, rootNode):
+        # port = "7077"
+        # rootNode = "CounterChain@counterchain.ddns.net:7445"
+
+        self.initPath()
+        os.chdir(self.bindir)
+        print("Starting MultiChain Node...")
+        self.proc = subprocess.Popen(["multichaind", "-datadir="+self.datadir, "-rpcport="+localRpcPort, rootNode], stdout=subprocess.PIPE, text=True)
+        # self.proc = subprocess.Popen(["multichaind", "-rpcport="+port, rootNode], stdout=subprocess.PIPE, text=True)
+        time.sleep(5)
+        try:
+            # Node initialised successfully, now get password
             print("Obtain rpcpassword")
-            configFile = datadir + "\\CounterChain\\multichain.conf"
-            conf = open(configFile, 'r')
+            conf = open(self.configFile, 'r')
             conf.readline()
             line = conf.readline().strip().split("=")
-            rpcpassword = line[1]
+            self.rpcpassword = line[1]
+            self.status = self.HAS_PASSWORD
             conf.close()
-            # print(rpcpassword)
-            return rpcpassword
-        
-        
-        # time.sleep(5)
-        # subprocess.run(["multichaind"])
+        except Exception as e:
+            print(e)
+            self.proc.kill()
+            self.status = None
+    
+    def stopMCNode(self):
+        self.proc.kill()
