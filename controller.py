@@ -356,11 +356,13 @@ class Controller:
             else:
                 self.show_dialog("Unable to connect to MultiChain RPC-Server")
         elif (result["success"] == True and result["status"] == "PENDING"):
-            self.loginwindow.statusLabel.setText("Verification for your account is under process.")
+            self.show_dialog("Verification for your account is under process.")
             print("Verification under process")
-        else:
-            self.loginwindow.statusLabel.setText("Incorrect username or password")
+        elif (result["success"] == False and result["status"] == SocketHelper.LOGIN_FAIL):
+            self.show_dialog("Incorrect username or password")
             print("{}:Login failed".format(result["status"]))
+        elif (result["success"] == False and result["status"] == SocketHelper.SOCKET_ERROR):
+            self.show_dialog("Connection to CounterChain server failed.\n\nPlease check your network connection.")
     
     def validate_registration(self):
         proper = True
@@ -417,10 +419,14 @@ class Controller:
         # upload node wallet address
         rpcport = "7077"
         rootIP = self.socket.resolve("counterchain.ddns.net")
+        if (rootIP == SocketHelper.SOCKET_ERROR):
+            self.show_dialog("Connection to CounterChain server failed.\n\nPlease check your network connection.")
+            return
+        
         rootNode = "CounterChain@" + rootIP + ":7445"
         self.nodeCreator.initMCNode(rpcport, rootNode)
         if (self.nodeCreator.status is None):
-            self.show_dialog("Unable to initiate MultiChain Node")
+            self.show_dialog("Unable to initiate MultiChain Node.")
             return
         
         if (self.nodeCreator.status == MCNodeCreator.HAS_WALLET_ADDRESS):
@@ -434,15 +440,15 @@ class Controller:
             # }
 
             if (result["success"] == True):
-                # self.regwindow.statusLabel.setText("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
                 self.show_dialog("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
                 print("Registration success. Verification under process for address:", self.nodeCreator.walletAddress)
                 print("Your user id:", result["userid"])
                 self.show_login()
-            else:
-                # self.regwindow.statusLabel.setText("{}:Registration failed".format(result["status"]))
-                self.show_dialog("{}:Registration failed".format(result["status"]))
+            elif (result["status"] == SocketHelper.REGISTER_FAIL):
+                self.show_dialog("Registration failed as ID already exists.")
                 print("{}:Registration failed".format(result["status"]))
+            elif (result["status"] == SocketHelper.SOCKET_ERROR):
+                self.show_dialog("Connection to CounterChain server failed.\n\nPlease check your network connection.")
     
     def do_logout(self):
         if (self.mainwindow):
