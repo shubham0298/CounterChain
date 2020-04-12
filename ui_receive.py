@@ -24,21 +24,7 @@ class Ui_ReceiveWindow(object):
         font = QtGui.QFont()
         font.setPointSize(12)
         ReceiveWindow.setFont(font)
-        ReceiveWindow.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QPushButton#homeButton{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}\n"
-"QPushButton#rcvButton{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}\n"
-"QPushButton#rcvallButton{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}\n"
-"QPushButton#checkButton{\n"
-"    background-color: rgb(165, 165, 165);\n"
-"}")
+        ReceiveWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(ReceiveWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -76,10 +62,10 @@ class Ui_ReceiveWindow(object):
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setGeometry(QtCore.QRect(30, 0, 211, 71))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))
@@ -113,7 +99,7 @@ class Ui_ReceiveWindow(object):
         font = QtGui.QFont()
         font.setPointSize(9)
         self.rcvTable.setFont(font)
-        self.rcvTable.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.rcvTable.setStyleSheet("")
         self.rcvTable.setObjectName("rcvTable")
         self.rcvTable.setColumnCount(4)
         self.rcvTable.setRowCount(0)

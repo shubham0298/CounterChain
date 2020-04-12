@@ -16,18 +16,7 @@ class Ui_itemadd(object):
         itemadd.resize(1000, 800)
         itemadd.setMinimumSize(QtCore.QSize(1000, 800))
         itemadd.setMaximumSize(QtCore.QSize(1000, 800))
-        itemadd.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QLineEdit{    \n"
-"    background-color: rgb(154, 154, 229);\n"
-"}\n"
-"QPushButton#back{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}\n"
-"QPushButton#addButton{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}")
+        itemadd.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(itemadd)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -94,10 +83,10 @@ class Ui_itemadd(object):
         self.label_4 = QtWidgets.QLabel(self.centralwidget)
         self.label_4.setGeometry(QtCore.QRect(30, 0, 211, 71))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))

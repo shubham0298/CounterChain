@@ -21,24 +21,7 @@ class Ui_SellWindow(object):
         SellWindow.setSizePolicy(sizePolicy)
         SellWindow.setMinimumSize(QtCore.QSize(1000, 800))
         SellWindow.setMaximumSize(QtCore.QSize(1000, 800))
-        SellWindow.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QLineEdit{    \n"
-"    background-color: rgb(154, 154, 229);\n"
-"}\n"
-"QPushButton#homeButton{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}\n"
-"QPushButton#sellConfirmButton{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}\n"
-"QPushButton#resetButton{\n"
-"    background-color: rgb(165, 165, 165);\n"
-"}\n"
-"QPushButton#clearButton{\n"
-"    background-color: rgb(165, 165, 165);\n"
-"}")
+        SellWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(SellWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.sellConfirmButton = QtWidgets.QPushButton(self.centralwidget)
@@ -82,10 +65,10 @@ class Ui_SellWindow(object):
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
         self.label_5.setGeometry(QtCore.QRect(30, 0, 211, 71))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))

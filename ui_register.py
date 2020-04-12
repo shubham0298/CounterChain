@@ -16,21 +16,7 @@ class Ui_registerWindow(object):
         registerWindow.resize(1000, 800)
         registerWindow.setMinimumSize(QtCore.QSize(1000, 800))
         registerWindow.setMaximumSize(QtCore.QSize(1000, 800))
-        registerWindow.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QPushButton#backButton{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}\n"
-"QPushButton#submitButton{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}\n"
-"QLineEdit{    \n"
-"    background-color: rgb(154, 154, 229);\n"
-"}\n"
-"QComboBox{    \n"
-"    background-color: rgb(154, 154, 229);\n"
-"}")
+        registerWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(registerWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
@@ -42,7 +28,7 @@ class Ui_registerWindow(object):
         font.setUnderline(True)
         font.setWeight(75)
         self.tabWidget.setFont(font)
-        self.tabWidget.setStyleSheet("background-color: rgb(107, 107, 159);")
+        self.tabWidget.setStyleSheet("")
         self.tabWidget.setTabBarAutoHide(False)
         self.tabWidget.setObjectName("tabWidget")
         self.tab = QtWidgets.QWidget()
@@ -105,7 +91,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(75)
         self.role.setFont(font)
-        self.role.setStyleSheet("background-color: rgb(255, 85, 0);")
+        self.role.setStyleSheet("")
         self.role.setObjectName("role")
         self.role.addItem("")
         self.role.addItem("")
@@ -119,7 +105,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.email_LE.setFont(font)
-        self.email_LE.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.email_LE.setStyleSheet("")
         self.email_LE.setObjectName("email_LE")
         self.paswd_LE = QtWidgets.QLineEdit(self.tab)
         self.paswd_LE.setGeometry(QtCore.QRect(300, 130, 301, 51))
@@ -129,7 +115,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.paswd_LE.setFont(font)
-        self.paswd_LE.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.paswd_LE.setStyleSheet("")
         self.paswd_LE.setEchoMode(QtWidgets.QLineEdit.Password)
         self.paswd_LE.setObjectName("paswd_LE")
         self.name_LE = QtWidgets.QLineEdit(self.tab)
@@ -140,7 +126,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.name_LE.setFont(font)
-        self.name_LE.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.name_LE.setStyleSheet("")
         self.name_LE.setObjectName("name_LE")
         self.phone_LE = QtWidgets.QLineEdit(self.tab)
         self.phone_LE.setGeometry(QtCore.QRect(300, 290, 301, 51))
@@ -150,7 +136,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.phone_LE.setFont(font)
-        self.phone_LE.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.phone_LE.setStyleSheet("")
         self.phone_LE.setObjectName("phone_LE")
         self.label_7 = QtWidgets.QLabel(self.tab)
         self.label_7.setGeometry(QtCore.QRect(70, 380, 141, 30))
@@ -170,7 +156,7 @@ class Ui_registerWindow(object):
         font.setUnderline(False)
         font.setWeight(50)
         self.lic_LE.setFont(font)
-        self.lic_LE.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.lic_LE.setStyleSheet("")
         self.lic_LE.setObjectName("lic_LE")
         self.tabWidget.addTab(self.tab, "")
         self.backButton = QtWidgets.QPushButton(self.centralwidget)
@@ -198,7 +184,7 @@ class Ui_registerWindow(object):
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
         self.label_6.setGeometry(QtCore.QRect(30, 0, 211, 71))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -207,7 +193,7 @@ class Ui_registerWindow(object):
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0, 128))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.PlaceholderText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
@@ -261,7 +247,7 @@ class Ui_registerWindow(object):
         self.role.setItemText(3, _translate("registerWindow", "Retailer"))
         self.label_7.setText(_translate("registerWindow", "License no.:"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("registerWindow", "Business Information"))
-        self.backButton.setText(_translate("registerWindow", "Back"))
+        self.backButton.setText(_translate("registerWindow", " Back"))
         self.submitButton.setText(_translate("registerWindow", "Submit"))
         self.label_6.setText(_translate("registerWindow", "CounterChain"))
 

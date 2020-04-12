@@ -16,21 +16,7 @@ class Ui_loginWindow(object):
         loginWindow.resize(1000, 800)
         loginWindow.setMinimumSize(QtCore.QSize(1000, 800))
         loginWindow.setMaximumSize(QtCore.QSize(1000, 800))
-        loginWindow.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QLineEdit{    \n"
-"    background-color: rgb(154, 154, 229);\n"
-"}\n"
-"QPushButton#register_2{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}\n"
-"QPushButton#login{\n"
-"    background-color: rgb(0, 170, 255);\n"
-"}\n"
-"QPushButton#aboutus{\n"
-"    background-color: rgb(0, 170, 0);\n"
-"}")
+        loginWindow.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(loginWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)

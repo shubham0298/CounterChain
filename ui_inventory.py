@@ -16,12 +16,7 @@ class Ui_inventory(object):
         inventory.resize(1000, 800)
         inventory.setMinimumSize(QtCore.QSize(1000, 800))
         inventory.setMaximumSize(QtCore.QSize(1000, 800))
-        inventory.setStyleSheet("QMainWindow{\n"
-"    background-color: rgb(85, 85, 127);\n"
-"}\n"
-"QPushButton#pushButton{\n"
-"    background-color: rgb(255, 0, 0);\n"
-"}")
+        inventory.setStyleSheet("")
         self.centralwidget = QtWidgets.QWidget(inventory)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -40,7 +35,7 @@ class Ui_inventory(object):
         font.setPointSize(12)
         self.tableWidget.setFont(font)
         self.tableWidget.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.IBeamCursor))
-        self.tableWidget.setStyleSheet("background-color: rgb(154, 154, 229);")
+        self.tableWidget.setStyleSheet("")
         self.tableWidget.setShowGrid(True)
         self.tableWidget.setRowCount(20)
         self.tableWidget.setColumnCount(4)
@@ -62,10 +57,10 @@ class Ui_inventory(object):
         self.label_3 = QtWidgets.QLabel(self.centralwidget)
         self.label_3.setGeometry(QtCore.QRect(30, 0, 211, 71))
         palette = QtGui.QPalette()
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-        brush = QtGui.QBrush(QtGui.QColor(0, 255, 255))
+        brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
         palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
         brush = QtGui.QBrush(QtGui.QColor(120, 120, 120))

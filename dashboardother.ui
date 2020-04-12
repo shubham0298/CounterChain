@@ -35,12 +35,7 @@
    <string>CounterChain - Dashboard</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow{
-	background-color: rgb(85, 85, 127);
-}
-QPushButton#logout{
-	background-color: rgb(255, 0, 0);
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -99,7 +94,7 @@ QPushButton#logout{
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(154, 154, 229);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Inventory</string>
@@ -142,7 +137,7 @@ QPushButton#logout{
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(154, 154, 229);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>Receive</string>
@@ -185,7 +180,7 @@ QPushButton#logout{
      <cursorShape>PointingHandCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(154, 154, 229);</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string>  Sell</string>
@@ -217,8 +212,8 @@ QPushButton#logout{
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>0</red>
-          <green>255</green>
-          <blue>255</blue>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -228,8 +223,8 @@ QPushButton#logout{
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>0</red>
-          <green>255</green>
-          <blue>255</blue>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -310,8 +305,8 @@ QPushButton#logout{
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>85</green>
+          <red>0</red>
+          <green>0</green>
           <blue>0</blue>
          </color>
         </brush>
@@ -321,8 +316,8 @@ QPushButton#logout{
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>85</green>
+          <red>0</red>
+          <green>0</green>
           <blue>0</blue>
          </color>
         </brush>
@@ -370,8 +365,8 @@ QPushButton#logout{
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>85</green>
+          <red>0</red>
+          <green>0</green>
           <blue>0</blue>
          </color>
         </brush>
@@ -381,8 +376,8 @@ QPushButton#logout{
        <colorrole role="WindowText">
         <brush brushstyle="SolidPattern">
          <color alpha="255">
-          <red>255</red>
-          <green>85</green>
+          <red>0</red>
+          <green>0</green>
           <blue>0</blue>
          </color>
         </brush>

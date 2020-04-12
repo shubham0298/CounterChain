@@ -26,12 +26,7 @@
    <string>Inventory</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QMainWindow{
-	background-color: rgb(85, 85, 127);
-}
-QPushButton#pushButton{
-	background-color: rgb(255, 0, 0);
-}</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label">
@@ -78,7 +73,7 @@ QPushButton#pushButton{
      <cursorShape>IBeamCursor</cursorShape>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(154, 154, 229);</string>
+     <string notr="true"/>
     </property>
     <property name="showGrid">
      <bool>true</bool>
@@ -166,8 +161,8 @@ QPushButton#pushButton{
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>0</red>
-          <green>255</green>
-          <blue>255</blue>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
@@ -177,8 +172,8 @@ QPushButton#pushButton{
         <brush brushstyle="SolidPattern">
          <color alpha="255">
           <red>0</red>
-          <green>255</green>
-          <blue>255</blue>
+          <green>0</green>
+          <blue>0</blue>
          </color>
         </brush>
        </colorrole>
