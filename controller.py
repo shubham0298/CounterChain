@@ -109,6 +109,7 @@ class DashWindowother(QtWidgets.QMainWindow, Ui_DashboardWindow_other):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
+
         self.sellButton.clicked.connect(self.sellbutton_handler)
         self.receiveButton.clicked.connect(self.receivebutton_handler)
         self.inventoryButton.clicked.connect(self.inventbutton_handler)
@@ -142,16 +143,16 @@ class SellWindow(QtWidgets.QMainWindow, Ui_SellWindow):
         self.clearButton.clicked.connect(self.clearbutton_handler)
         self.resetButton.clicked.connect(self.resetbutton_handler)
 
+        # Auto-completer drop down suggestions
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         c.execute("SELECT pid FROM stocks")
         lst = []
-        for i,row in enumerate(list(c.fetchall())):
+        for row in c.fetchall():
 	        lst.append(row[0])
-
+        conn.close()
         completer = QtWidgets.QCompleter(lst)
         self.pidLE.setCompleter(completer)
-        conn.close()
 
     def homebutton_handler(self):
         self.go_back.emit()
@@ -218,8 +219,8 @@ class InventoryWindow(QtWidgets.QMainWindow, Ui_inventory):
     def __init__(self):
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
-        self.tableWidget.setHorizontalHeaderLabels(["Product ID", "Product Name", "Product Quantity", "Status"])
-        
+
+        self.tableWidget.setHorizontalHeaderLabels(["Product ID", "Product Name", "Quantity", "Status"])
         self.pushButton.clicked.connect(self.homebutton_handler)
 
     def homebutton_handler(self):
@@ -236,6 +237,9 @@ class Controller:
         self.socket = SocketHelper()
         self.nodeCreator = MCNodeCreator()
     
+    '''
+        Window controllers
+    '''
     def show_login(self):
         self.loginwindow = LoginWindow()
         self.loginwindow.open_dash.connect(self.initiate_login)
@@ -271,10 +275,11 @@ class Controller:
         self.mainwindow.open_inventory.connect(self.show_inventory)
         self.mainwindow.logout_signal.connect(self.do_logout)
         self.mainwindow.show()
-        self.mainwindow.role.setText("Role: "+self.role)
-        self.mainwindow.uid.setText("Login ID: "+self.userid)
+        self.mainwindow.role.setText("Role: " + self.role)
+        self.mainwindow.uid.setText("Login ID: " + self.userid)
         if (self.currentWindow):
             self.currentWindow.close()
+        self.stock_init()
 
     def show_sell(self):
         self.sell = SellWindow()
@@ -298,20 +303,9 @@ class Controller:
         self.invent = InventoryWindow()
         self.invent.go_back.connect(self.show_main)
         self.invent.show()
-
-        conn = sqlite3.connect('drug_stock.db')
-        try:
-            result = conn.execute("SELECT * FROM stocks")
-            for row_no, row_data in enumerate(result):
-                self.invent.tableWidget.setRowCount(row_no+1)
-                for col_no, col_data in enumerate(row_data):
-                    self.invent.tableWidget.setItem(row_no, col_no, QtWidgets.QTableWidgetItem(str(col_data)))
-        except:
-            print("No Table Found!")
-        conn.close()
-
         self.mainwindow.hide()
         self.currentWindow = self.invent
+        self.stock_list()
     
     def show_receive(self):
         self.receive = ReceiveWindow()
@@ -324,8 +318,10 @@ class Controller:
         self.currentWindow = self.receive
         self.rcv_list()
     
+    '''
+        Login and Registration functions
+    '''
     def initiate_login(self):
-        # socket code here
         login_data = [self.loginwindow.id_lineEdit.text().strip(), self.loginwindow.paswd_lineEdit.text().strip()]
         result = self.socket.login(login_data)
         # returns result object
@@ -410,13 +406,9 @@ class Controller:
             newUserData.append(emailText)
             newUserData.append(phoneText)
             newUserData.append(licText)
-            # self.regwindow.statusLabel.setText("")
             self.initiate_registration(newUserData)
 
     def initiate_registration(self, newUserData):
-        # socket code here
-        # upload details and files
-        # upload node wallet address
         rpcport = "7077"
         rootIP = self.socket.resolve("counterchain.ddns.net")
         if (rootIP == SocketHelper.SOCKET_ERROR):
@@ -438,7 +430,6 @@ class Controller:
             #     "status": "PENDING", or Error msg
             #     "userID": txn_id
             # }
-
             if (result["success"] == True):
                 self.show_dialog("Registration is successful.\n\nYour Login ID is {}\n\nPlease note it down for further use.".format(result["userid"]))
                 print("Registration success. Verification under process for address:", self.nodeCreator.walletAddress)
@@ -449,21 +440,10 @@ class Controller:
                 print("{}:Registration failed".format(result["status"]))
             elif (result["status"] == SocketHelper.SOCKET_ERROR):
                 self.show_dialog("Connection to CounterChain server failed.\n\nPlease check your network connection.")
-    
-    def do_logout(self):
-        if (self.mainwindow):
-            self.mainwindow.close()
-        self.client.stop()
-        self.show_login()
-    
-    def show_dialog(self, txt):
-        msg = QtWidgets.QMessageBox()
-        msg.setIcon(QtWidgets.QMessageBox.Information)
-        msg.setWindowTitle("CounterChain")
-        msg.setText(txt)
-        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-        msg.exec_()
 
+    '''
+        Add window functions
+    '''
     def validate_add_txn(self):
         proper = True
         pidText = self.additem.pidLE.text().strip()
@@ -482,7 +462,7 @@ class Controller:
     def add_txn(self, productData):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
-        c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
+        # c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
         try:
             # Generate JSON data
             jsonData = { "json": {
@@ -496,7 +476,7 @@ class Controller:
             if (self.client.status == MCClient.PUBLISH_ERROR):
                 self.show_dialog("Unable to add product")
             else:
-                c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (productData[0], productData[1], "-", "In Stock"))
+                c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (productData[0], productData[1], 1, "In Stock"))
                 self.show_dialog("Product Registered!")
         except:
             self.show_dialog("Product ID Exists!")
@@ -505,6 +485,9 @@ class Controller:
             conn.commit()
             conn.close()
 
+    '''
+        Sell window functions
+    '''
     def validate_sell_txn(self):
         proper = True
         pidText = self.sell.pidLE.text().strip()
@@ -515,6 +498,9 @@ class Controller:
             proper = False
         elif (len(buyeridText) == 0):
             self.show_dialog("Enter Buyer ID")
+            proper = False
+        elif (buyeridText == self.userid):
+            self.show_dialog("Cannot sell to self")
             proper = False
         elif (not self.client.userExists(buyeridText) and self.client.status == MCClient.GOOD):
             self.show_dialog("No such buyer exists")
@@ -530,17 +516,17 @@ class Controller:
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         
-        c.execute('''SELECT status from stocks where pid=?''', (sellData[0],))
-        status = c.fetchone()
-        if (len(status) == 0):
+        c.execute('''SELECT status,pname FROM stocks WHERE pid=?''', (sellData[0],))
+        pdata = c.fetchone()
+        if (pdata == None):
             self.show_dialog("No such product")
-        elif (status[0] == "Sold Out"):
+        elif (pdata[0] == "Sold Out"):
             self.show_dialog("Product(s) out of Stock!")
         else:
             # Generate JSON data
             jsonData = { "json" : {
                 "PId": sellData[0],
-                "PName": "dummy",
+                "PName": pdata[1],
                 "SellerId": self.userid,
                 "BuyerId": sellData[1],
                 "Status": "PENDING"
@@ -561,6 +547,9 @@ class Controller:
         self.sell.pidLE.clear()
         self.sell.buyeridLE.clear()
     
+    '''
+        Receive window functions
+    '''
     def rcv_list(self):
         # sellerId = self.receive.selleridLE.text()
         buyerId = self.userid
@@ -630,18 +619,55 @@ class Controller:
                 row += 1
             rowCount = self.receive.rcvTable.rowCount()
     
-    def add_to_stock(self, pid, pname):
+    '''
+        drug_stock database handlers
+    '''
+    def stock_init(self):
         conn = sqlite3.connect('drug_stock.db')
         c = conn.cursor()
         c.execute("CREATE TABLE if not exists stocks(pid TEXT PRIMARY KEY, pname TEXT, quantity INTEGER, status TEXT)")
+        conn.commit()
+        conn.close()
+    
+    def stock_list(self):
+        conn = sqlite3.connect('drug_stock.db')
         try:
-            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (pid, pname, "-", "In Stock"))
+            result = conn.execute("SELECT * FROM stocks")
+            for row_no, row_data in enumerate(result):
+                self.invent.tableWidget.setRowCount(row_no + 1)
+                for col_no, col_data in enumerate(row_data):
+                    self.invent.tableWidget.setItem(row_no, col_no, QtWidgets.QTableWidgetItem(str(col_data)))
+        except:
+            print("No Table Found!")
+        conn.close()
+
+    def add_to_stock(self, pid, pname):
+        conn = sqlite3.connect('drug_stock.db')
+        c = conn.cursor()
+        try:
+            c.execute("INSERT INTO stocks VALUES(?,?,?,?)", (pid, pname, "1", "In Stock"))
             conn.commit()
             self.show_dialog("Product(s) Received")
         except:
             self.show_dialog("Product Already Exists!")
         conn.close()
 
+    '''
+        Miscellaneous functions
+    '''
+    def do_logout(self):
+        if (self.mainwindow):
+            self.mainwindow.close()
+        self.client.stop()
+        self.show_login()
+    
+    def show_dialog(self, txt):
+        msg = QtWidgets.QMessageBox()
+        msg.setIcon(QtWidgets.QMessageBox.Information)
+        msg.setWindowTitle("CounterChain")
+        msg.setText(txt)
+        msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+        msg.exec_()
 
 def main():
     # rpcport = "7077"
